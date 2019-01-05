@@ -1,0 +1,27 @@
+---
+title: "Intermediate R Notes"
+author: "Annika Kufrovich"
+date: "January 5, 2019"
+output: html_document
+---
+
+##Notes
+
+* Starts with review of relational Operators, I know these: ==, !=, <, >, <=, and >= 
+    + One thing is that these operators work for strings in alphebetical order 
+* Review of logical operators, know these as well, &, |, and ! 
+* && and || only evaluate the first element of a vector 
+* Review of if and else statements and while/for loops 
+* Skipped functions chapter because larger course on functions 
+* Apply family 
+    + lapply can apply a function (such as class) to all the components of something (like a list or vector) and always returns a list unless 
+    + sapply does what lapply does but automatically puts the output into a vector, array, or matrix, however, sapply returns a list if outcome vectors are not the same length
+    + vapply
+
+
+## Practice
+
+
+```{r}
+```
+
