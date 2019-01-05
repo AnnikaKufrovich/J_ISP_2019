@@ -19,15 +19,20 @@ output: html_document
     + vapply is like lapply and sapply but you have to specify the form of the output 
 * reviewing general mathematical functions, know these
 * regular expressions
-    + grep
     + grepl looks for a pattern (indicated by a regex) in something, returns logical output
-    + sub
-    + gsub
+    + grep is similar to grepl but instead of returning logical output, outputs instances where function came out true
+    + sub adds onto grepl by adding a replacement argument for each iteration
+    + gsub is like sub but allows replacement past the first instance in each iteration, ie replaces both a's with o's in impala (now impolo), whereas gsub would only replace the first a, makin the new string "impola"
+    + `".*"` in a regular expressions takes place of characters that could be unmatched between two things you're looking for in a pattern
+    + Ex. in `"@.*\\.edu$"`, characters between @ and .edu are ignored/mathced by `".*"` so that your pattern earches for valid .edu email addresses
+    + regular expressions can get very complex, will need practice
+    + `"\\s"` indicates a space in regex as it "escapes" the normal s character and makes it a metacharacter
+*Times and Dates, review of basic date/time transformations, I've used lubridate which is more advanced
 
 
 ## Practice
 
-Decided not to practice most of material from intermediate R course because most was review
+Decided not to practice material from intermediate R course because most was review, will likely get regex practice in goals tomorrow or can revisit in Intermediate R Practice course
 
 ```{r}
 ```
@@ -35,7 +40,7 @@ Decided not to practice most of material from intermediate R course because most
 
 ## Goals for tomorrow
 * Finish data camp functions course
-* Try to figure out a function that checks if a row from new voter file matches one in older voter file (will do this with smaller county level voter file)
+* Practice by trying to figure out a function that checks if a row from the new voter file matches one in older voter file (will do this with smaller county level voter file)
   + will add a column with TRUE outcomes for matched voters and FALSE for unmatched voters for verification
 * If this works, continue to create lon/lat columns that take geocoded lon/lat of old matched voters and puts those values in the new lon/lat columns of new matched voters
     + This should leave only new voters and moved voters without lon/lat values (ie all original falses should not have lon/lat)
