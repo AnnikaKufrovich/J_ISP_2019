@@ -138,14 +138,35 @@ $(document).ready(function () {
 <li>Skipped functions chapter because larger course on functions</li>
 <li>Apply family
 <ul>
-<li>lapply can apply a function (such as class) to all the components of something (like a list or vector) and always returns a list unless</li>
+<li>lapply can apply a function (such as class) to all the components of something (like a list or vector) and always returns a list</li>
 <li>sapply does what lapply does but automatically puts the output into a vector, array, or matrix, however, sapply returns a list if outcome vectors are not the same length</li>
-<li>vapply</li>
+<li>vapply is like lapply and sapply but you have to specify the form of the output</li>
+</ul></li>
+<li>reviewing general mathematical functions, know these</li>
+<li>regular expressions
+<ul>
+<li>grep</li>
+<li>grepl looks for a pattern (indicated by a regex) in something, returns logical output</li>
+<li>sub</li>
+<li>gsub</li>
 </ul></li>
 </ul>
 </div>
 <div id="practice" class="section level2">
 <h2>Practice</h2>
+<p>Decided not to practice most of material from intermediate R course because most was review</p>
+</div>
+<div id="goals-for-tomorrow" class="section level2">
+<h2>Goals for tomorrow</h2>
+<ul>
+<li>Finish data camp functions course</li>
+<li>Try to figure out a function that checks if a row from new voter file matches one in older voter file (will do this with smaller county level voter file)</li>
+<li>will add a column with TRUE outcomes for matched voters and FALSE for unmatched voters for verification</li>
+<li>If this works, continue to create lon/lat columns that take geocoded lon/lat of old matched voters and puts those values in the new lon/lat columns of new matched voters
+<ul>
+<li>This should leave only new voters and moved voters without lon/lat values (ie all original falses should not have lon/lat) *Note: final function requires the use of 3 datasets: old ungeocoded voter file, new ungeocoded file voter file, and old geocoded voter file. If I take the old geocoded dataset, I should simply have to use dplyr to remove the lon/lat columns to create the old ungeocoded dataset. While having all 3 datasets downloaded is certainly possible, this or finding a way to ignore the lon/lat columns in my initial comparison</li>
+</ul></li>
+</ul>
 </div>
 
 
