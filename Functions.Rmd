@@ -5,10 +5,30 @@ date: "January 6, 2019"
 output: html_document
 ---
 
-
 ##Notes
 
-*
+* Reviewed when to write a function, generally when code is repeated more than twice and code is bulky 
+* Functions should have minimal duplication, mainly for clarity 
+* Good functions are correct and understandable 
+* You can make arguments for operations within your function 
+* Using purrr 
+    + map functions work similarly to the apply functions and each has a different return type 
+    + `map()` returns a list 
+    + `map_dbl()` returns a double vector 
+    + `map_lgl()` returns a logical vector 
+    + `map_int()` returns an integer vector 
+    + `map_chr()` returns a character vector 
+    + `~` followed by a formula can replace calling a defined function or an anonymous function, `.` would be used as a place holder for an element of `.x` or vector argument 
+    + you can also shorthand subsetting in lists 
+    + sometimes the map functions fail and won't show successes or failures, you can see sucesses and failures if you wrap these functions in the purrr function `safely()` 
+    + `possibly()` is similar to `safely()` in making map functions run, but intead of making two lists, you define a replacement for iterations with errors 
+    + `quietly()` ets all extra output produced by a function 
+    + `map2()` allows for a second object/argument to be iterated over 
+    + `pmap()` allows for any number of arguments to be iterated over, has a list as its first argument `.l` 
+    + `invoke_map()` is used for iterating over functions and , order of aruments is reversed now taking a list of functions first for `.f`, and an argument for `.x` second 
+    + `walk()` has same arguments as map functions but is used for side effects, like saving different ggplots to pdfs
+    + lists are a lot
+
 
 
 ##Practice/Application

@@ -128,7 +128,29 @@ $(document).ready(function () {
 <div id="notes" class="section level2">
 <h2>Notes</h2>
 <ul>
-<li></li>
+<li>Reviewed when to write a function, generally when code is repeated more than twice and code is bulky</li>
+<li>Functions should have minimal duplication, mainly for clarity</li>
+<li>Good functions are correct and understandable</li>
+<li>You can make arguments for operations within your function</li>
+<li>Using purrr
+<ul>
+<li>map functions work similarly to the apply functions and each has a different return type</li>
+<li><code>map()</code> returns a list</li>
+<li><code>map_dbl()</code> returns a double vector</li>
+<li><code>map_lgl()</code> returns a logical vector</li>
+<li><code>map_int()</code> returns an integer vector</li>
+<li><code>map_chr()</code> returns a character vector</li>
+<li><code>~</code> followed by a formula can replace calling a defined function or an anonymous function, <code>.</code> would be used as a place holder for an element of <code>.x</code> or vector argument</li>
+<li>you can also shorthand subsetting in lists</li>
+<li>sometimes the map functions fail and won’t show successes or failures, you can see sucesses and failures if you wrap these functions in the purrr function <code>safely()</code></li>
+<li><code>possibly()</code> is similar to <code>safely()</code> in making map functions run, but intead of making two lists, you define a replacement for iterations with errors</li>
+<li><code>quietly()</code> ets all extra output produced by a function</li>
+<li><code>map2()</code> allows for a second object/argument to be iterated over</li>
+<li><code>pmap()</code> allows for any number of arguments to be iterated over, has a list as its first argument <code>.l</code></li>
+<li><code>invoke_map()</code> is used for iterating over functions and , order of aruments is reversed now taking a list of functions first for <code>.f</code>, and an argument for <code>.x</code> second</li>
+<li><code>walk()</code> has same arguments as map functions but is used for side effects, like saving different ggplots to pdfs</li>
+<li>lists are a lot</li>
+</ul></li>
 </ul>
 </div>
 <div id="practiceapplication" class="section level2">
