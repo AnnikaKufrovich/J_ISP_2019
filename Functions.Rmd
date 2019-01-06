@@ -1,0 +1,22 @@
+---
+title: "FunctionNotes"
+author: "Annika Kufrovich"
+date: "January 6, 2019"
+output: html_document
+---
+
+
+##Notes
+
+*
+
+
+##Practice/Application
+
+
+
+```{r}
+
+```
+
+##Goals for Tomorrow
