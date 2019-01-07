@@ -34,11 +34,7 @@ output: html_document
 
 Decided not to practice material from intermediate R course because most was review, will likely get regex practice in goals tomorrow or can revisit in Intermediate R Practice course
 
-```{r}
-```
-
-
-## Goals for tomorrow
+## Goals for tomorrow and the day after
 * Finish data camp functions course
 * Practice by trying to figure out a function that checks if a row from the new voter file matches one in older voter file (will do this with smaller county level voter file)
   + will add a column with TRUE outcomes for matched voters and FALSE for unmatched voters for verification

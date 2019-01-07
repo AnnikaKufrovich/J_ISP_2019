@@ -164,9 +164,134 @@ $(document).ready(function () {
 </div>
 <div id="practiceapplication" class="section level2">
 <h2>Practice/Application</h2>
+<p>Comparing test dataframes</p>
+<pre class="r"><code>test1 &lt;- data.frame(numbers = 1:8, letters = c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;))
+test2 &lt;- rev(test1)
+comparison &lt;- compare::compare(test1, test2, allowAll = TRUE)
+comparison$tM</code></pre>
+<pre><code>##   numbers letters
+## 1       1       a
+## 2       2       b
+## 3       3       c
+## 4       4       d
+## 5       5       a
+## 6       6       b
+## 7       7       c
+## 8       8       d</code></pre>
+<pre class="r"><code>test1a &lt;- data.frame(numbers = 1:8, letters = c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;))
+test2a &lt;- data.frame(numbers = 1:7, letters = c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;))
+comparison_a &lt;- compare::compare(test1a, test2a, allowAll = TRUE)
+comparison_a$tM</code></pre>
+<pre><code>##   numbers letters
+## 1       1       a
+## 2       2       b
+## 3       3       c
+## 4       4       d
+## 5       5       a
+## 6       6       b
+## 7       7       c</code></pre>
+<p>while the compare function is cool, I couldn’t figure out how to use its output to make a new column. It didn’t have an attribute with a data frame of the unmatched rows from test1a.</p>
+<pre class="r"><code>test1b &lt;- data.frame(numbers = 1:8, letters = c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;))
+test2b &lt;- data.frame(numbers = 1:8, letters = c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;e&quot;))
+comparison_b &lt;- semi_join(test1b, test2b)
+comparisonb_match &lt;- comparison_b %&gt;% 
+  mutate(matched = TRUE)
+comparisonb2 &lt;- anti_join(test1b, test2b)
+comparisonb2_unmatch &lt;- comparisonb2 %&gt;% 
+  mutate(matched = FALSE)
+comparisonb2_unmatch</code></pre>
+<pre><code>##   numbers letters matched
+## 1       8       d   FALSE</code></pre>
+<p>retest with reversed test2b</p>
+<pre class="r"><code>test3b &lt;- rev(test2b)
+comparison_b_re &lt;- semi_join(test1b, test3b)
+comparisonb_match_re &lt;- comparison_b_re %&gt;% 
+  mutate(matched = TRUE)
+comparisonb2_re &lt;- anti_join(test1b, test3b)
+comparisonb2_unmatch_re &lt;- comparisonb2_re %&gt;% 
+  mutate(matched = FALSE)
+
+
+matching_status &lt;- full_join(comparisonb_match_re, comparisonb2_unmatch_re)
+matching_status</code></pre>
+<pre><code>##   numbers letters matched
+## 1       1       a    TRUE
+## 2       2       b    TRUE
+## 3       3       c    TRUE
+## 4       4       d    TRUE
+## 5       5       a    TRUE
+## 6       6       b    TRUE
+## 7       7       c    TRUE
+## 8       8       d   FALSE</code></pre>
+<p>It works! now to make a function</p>
+<pre class="r"><code>matching_dfs &lt;- function(newdf, olddf) {
+  matching &lt;- semi_join(newdf, olddf)
+  matching_col &lt;- matching %&gt;%
+    mutate(matched = TRUE)
+  not_matching &lt;- anti_join(newdf, olddf)
+  not_matching_col &lt;- not_matching %&gt;%
+    mutate(matched = FALSE)
+  combined_df &lt;- full_join(matching_col, not_matching_col)
+  combined_df
+}
+
+func_test &lt;- matching_dfs(test1b, test3b)
+func_test</code></pre>
+<pre><code>##   numbers letters matched
+## 1       1       a    TRUE
+## 2       2       b    TRUE
+## 3       3       c    TRUE
+## 4       4       d    TRUE
+## 5       5       a    TRUE
+## 6       6       b    TRUE
+## 7       7       c    TRUE
+## 8       8       d   FALSE</code></pre>
+<p>Testing with “olddf” argument having an extra column</p>
+<pre class="r"><code>test4b &lt;- data.frame(numbers = 1:8, letters = c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;e&quot;), lon = c(12, 31, 64, 38, 89, 73, 91, 21))
+
+func_test2 &lt;- matching_dfs(test1b, test4b)
+func_test2</code></pre>
+<pre><code>##   numbers letters matched
+## 1       1       a    TRUE
+## 2       2       b    TRUE
+## 3       3       c    TRUE
+## 4       4       d    TRUE
+## 5       5       a    TRUE
+## 6       6       b    TRUE
+## 7       7       c    TRUE
+## 8       8       d   FALSE</code></pre>
+<p>Now to figure out how to take extra column values in matched rows and add them to the new df. Unmatched values should have NA in this column</p>
+<pre class="r"><code>matching_dfs_addcol &lt;- function(newdf, olddf) {
+  matching &lt;- semi_join(olddf, newdf)
+  matching_col &lt;- matching %&gt;%
+    mutate(matched = TRUE)
+  not_matching &lt;- anti_join(newdf, olddf)
+  not_matching_col &lt;- not_matching %&gt;%
+    mutate(matched = FALSE)
+  combined_df &lt;- full_join(matching_col, not_matching_col)
+  combined_df
+}
+
+new_func_test &lt;- matching_dfs_addcol(test1b, test4b)
+new_func_test</code></pre>
+<pre><code>##   numbers letters lon matched
+## 1       1       a  12    TRUE
+## 2       2       b  31    TRUE
+## 3       3       c  64    TRUE
+## 4       4       d  38    TRUE
+## 5       5       a  89    TRUE
+## 6       6       b  73    TRUE
+## 7       7       c  91    TRUE
+## 8       8       d  NA   FALSE</code></pre>
 </div>
 <div id="goals-for-tomorrow" class="section level2">
 <h2>Goals for Tomorrow</h2>
+<ul>
+<li>Test my function with a small county from the voter file tomorrow</li>
+<li>Do first 2-3 chapters of Efficient R Coding course on Data camp</li>
+<li>start trying to apply ideas to the functions I have created. Maybe look for base r alternatives since 2nd chapter is focused on fast base r code.</li>
+<li>Dicuss with Professor Crow New ISP plans, maybe ask for resources on PostgreSQL and PostGIS</li>
+</ul>
 </div>
 
 

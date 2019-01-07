@@ -40,9 +40,113 @@ output: html_document
 ##Practice/Application
 
 
-
-```{r}
-
+```{r, include=FALSE}
+library(purrr)
+library(compare)
+library(dplyr)
 ```
 
+
+Comparing test dataframes 
+
+```{r, warning=FALSE, message=FALSE}
+test1 <- data.frame(numbers = 1:8, letters = c("a", "b", "c", "d", "a", "b", "c", "d"))
+test2 <- rev(test1)
+comparison <- compare::compare(test1, test2, allowAll = TRUE)
+comparison$tM
+```
+
+```{r, warning=FALSE, message=FALSE}
+test1a <- data.frame(numbers = 1:8, letters = c("a", "b", "c", "d", "a", "b", "c", "d"))
+test2a <- data.frame(numbers = 1:7, letters = c("a", "b", "c", "d", "a", "b", "c"))
+comparison_a <- compare::compare(test1a, test2a, allowAll = TRUE)
+comparison_a$tM
+```
+
+
+while the compare function is cool, I couldn't figure out how to use its output to make a new column. It didn't have an attribute with a data frame of the unmatched rows from test1a.  
+
+
+```{r, warning=FALSE, message=FALSE}
+test1b <- data.frame(numbers = 1:8, letters = c("a", "b", "c", "d", "a", "b", "c", "d"))
+test2b <- data.frame(numbers = 1:8, letters = c("a", "b", "c", "d", "a", "b", "c", "e"))
+comparison_b <- semi_join(test1b, test2b)
+comparisonb_match <- comparison_b %>% 
+  mutate(matched = TRUE)
+comparisonb2 <- anti_join(test1b, test2b)
+comparisonb2_unmatch <- comparisonb2 %>% 
+  mutate(matched = FALSE)
+comparisonb2_unmatch
+```
+
+
+retest with reversed test2b
+
+```{r, warning=FALSE, message=FALSE}
+test3b <- rev(test2b)
+comparison_b_re <- semi_join(test1b, test3b)
+comparisonb_match_re <- comparison_b_re %>% 
+  mutate(matched = TRUE)
+comparisonb2_re <- anti_join(test1b, test3b)
+comparisonb2_unmatch_re <- comparisonb2_re %>% 
+  mutate(matched = FALSE)
+
+
+matching_status <- full_join(comparisonb_match_re, comparisonb2_unmatch_re)
+matching_status
+```
+
+It works! now to make a function
+
+```{r, warning=FALSE, message=FALSE}
+matching_dfs <- function(newdf, olddf) {
+  matching <- semi_join(newdf, olddf)
+  matching_col <- matching %>%
+    mutate(matched = TRUE)
+  not_matching <- anti_join(newdf, olddf)
+  not_matching_col <- not_matching %>%
+    mutate(matched = FALSE)
+  combined_df <- full_join(matching_col, not_matching_col)
+  combined_df
+}
+
+func_test <- matching_dfs(test1b, test3b)
+func_test
+```
+
+Testing with "olddf" argument having an extra column
+
+```{r, warning=FALSE, message=FALSE}
+test4b <- data.frame(numbers = 1:8, letters = c("a", "b", "c", "d", "a", "b", "c", "e"), lon = c(12, 31, 64, 38, 89, 73, 91, 21))
+
+func_test2 <- matching_dfs(test1b, test4b)
+func_test2
+```
+
+Now to figure out how to take extra column values in matched rows and add them to the new df. Unmatched values should have NA in this column
+
+```{r, warning=FALSE, message=FALSE}
+matching_dfs_addcol <- function(newdf, olddf) {
+  matching <- semi_join(olddf, newdf)
+  matching_col <- matching %>%
+    mutate(matched = TRUE)
+  not_matching <- anti_join(newdf, olddf)
+  not_matching_col <- not_matching %>%
+    mutate(matched = FALSE)
+  combined_df <- full_join(matching_col, not_matching_col)
+  combined_df
+}
+
+new_func_test <- matching_dfs_addcol(test1b, test4b)
+new_func_test
+```
+
+
+
+
 ##Goals for Tomorrow
+
+* Test my function with a small county from the voter file tomorrow
+* Do first 2-3 chapters of Efficient R Coding course on Data camp
+* start trying to apply ideas to the functions I have created. Maybe look for base r alternatives since 2nd chapter is focused on fast base r code.
+* Dicuss with Professor Crow New ISP plans, maybe ask for resources on PostgreSQL and PostGIS
