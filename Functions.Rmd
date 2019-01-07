@@ -27,8 +27,14 @@ output: html_document
     + `pmap()` allows for any number of arguments to be iterated over, has a list as its first argument `.l` 
     + `invoke_map()` is used for iterating over functions and , order of aruments is reversed now taking a list of functions first for `.f`, and an argument for `.x` second 
     + `walk()` has same arguments as map functions but is used for side effects, like saving different ggplots to pdfs
-    + lists are a lot
-
+    + lists are a lot 
+* Functions hould have clear error mesages when they fail 
+* 3 main problematic functions: 
+    + Type-unstable functions, ie functions that don't have a set type of output 
+    + Non-standard evaluation, when things have ambiguity 
+    + Hidden arguments 
+* Using `stop()` in a function allows you to have infromative error messaes for different conditions (when placed in an if statement)
+* This course felt very theoretical and less practical, would have prefered work with functions that had more to do with dataframes 
 
 
 ##Practice/Application
