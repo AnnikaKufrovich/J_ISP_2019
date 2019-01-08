@@ -161,7 +161,7 @@ $(document).ready(function () {
 <pre class="r"><code>##res &lt;- benchmark_std(runs = 3)
 ##plot(res)</code></pre>
 <p>takes a bit to run this code, Apparently my laptop is slow :(</p>
-<p>oh well, lets profile my function from yesterday on the smallest county in Florida, Liberty County</p>
+<p>oh well, lets try my function from yesterday on the smallest county in Florida, Liberty County</p>
 <pre class="r"><code>matching_dfs_addcol &lt;- function(newdf, olddf) {
   matching &lt;- semi_join(olddf, newdf)
   matching_col &lt;- matching %&gt;%
@@ -171,10 +171,42 @@ $(document).ready(function () {
     mutate(matched = FALSE)
   combined_df &lt;- full_join(matching_col, not_matching_col)
   combined_df
-}</code></pre>
+}
+
+old_lib &lt;- read.delim(&quot;C:/Users/TeenieTiny/Desktop/2nd Year/Data-Old/Voter_Registration_20180410/20180410_VoterDetail/LIB_20180410.txt&quot;, header=FALSE)
+
+
+new_lib &lt;- read.delim(&quot;C:/Users/TeenieTiny/Desktop/2nd Year/Data/Voter_Registration_20181113/20181113_VoterDetail/LIB_20181113.txt&quot;, header=FALSE)
+
+
+#old one is not currently geo-coded, adding fake lon, lat columns
+old_lib_lonlat &lt;- old_lib %&gt;% 
+  mutate(lon = 80) %&gt;% 
+  mutate(lat = 90)
+
+new_lib$V25 &lt;- as.integer(new_lib$V25)
+new_lib$V26 &lt;- as.integer(new_lib$V26)
+new_lib$V30 &lt;- as.integer(new_lib$V30)
+new_lib$V31 &lt;- as.integer(new_lib$V31)
+new_lib$V32 &lt;- as.integer(new_lib$V32)
+new_lib$V33 &lt;- as.integer(new_lib$V33)
+new_lib$V34 &lt;- as.integer(new_lib$V34)
+new_lib$V28 &lt;- NULL
+old_lib_lonlat$V28 &lt;- NULL
+
+
+new_libvoters &lt;- matching_dfs_addcol(new_lib, old_lib_lonlat)
+summary(new_libvoters$matched)</code></pre>
+<pre><code>##    Mode   FALSE 
+## logical    4626</code></pre>
+<p>maybe I should adjust this to only look at certain columns sice no one came up as “matched”</p>
 </div>
 <div id="goals-for-tomorrow" class="section level2">
 <h2>Goals for Tomorrow</h2>
+<ul>
+<li>Play around more with voter data and my function until I get a reasonable amount of matches, then benchmark my code</li>
+<li>finish Efficient R code course and maybe start parallel programming course?</li>
+</ul>
 </div>
 
 

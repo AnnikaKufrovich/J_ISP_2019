@@ -34,6 +34,7 @@ output: html_document
 library(microbenchmark)
 library(benchmarkme)
 library(profvis)
+library(dplyr)
 ```
 
 ```{r}
@@ -44,9 +45,8 @@ library(profvis)
 takes a bit to run this code, Apparently my laptop is slow :(
 
 
-oh well, lets profile my function from yesterday on the smallest county in Florida, Liberty County
-```{r}
-
+oh well, lets try my function from yesterday on the smallest county in Florida, Liberty County
+```{r, message=FALSE, warning=FALSE}
 matching_dfs_addcol <- function(newdf, olddf) {
   matching <- semi_join(olddf, newdf)
   matching_col <- matching %>%
@@ -58,8 +58,36 @@ matching_dfs_addcol <- function(newdf, olddf) {
   combined_df
 }
 
+old_lib <- read.delim("C:/Users/TeenieTiny/Desktop/2nd Year/Data-Old/Voter_Registration_20180410/20180410_VoterDetail/LIB_20180410.txt", header=FALSE)
+
+
+new_lib <- read.delim("C:/Users/TeenieTiny/Desktop/2nd Year/Data/Voter_Registration_20181113/20181113_VoterDetail/LIB_20181113.txt", header=FALSE)
+
+
+#old one is not currently geo-coded, adding fake lon, lat columns
+old_lib_lonlat <- old_lib %>% 
+  mutate(lon = 80) %>% 
+  mutate(lat = 90)
+
+new_lib$V25 <- as.integer(new_lib$V25)
+new_lib$V26 <- as.integer(new_lib$V26)
+new_lib$V30 <- as.integer(new_lib$V30)
+new_lib$V31 <- as.integer(new_lib$V31)
+new_lib$V32 <- as.integer(new_lib$V32)
+new_lib$V33 <- as.integer(new_lib$V33)
+new_lib$V34 <- as.integer(new_lib$V34)
+new_lib$V28 <- NULL
+old_lib_lonlat$V28 <- NULL
+
+
+new_libvoters <- matching_dfs_addcol(new_lib, old_lib_lonlat)
+summary(new_libvoters$matched)
 ```
 
 
+maybe I should adjust this to only look at certain columns sice no one came up as "matched"
+
 
 ## Goals for Tomorrow
+* Play around more with voter data and my function until I get a reasonable amount of matches, then benchmark my code
+* finish Efficient R code course and maybe start parallel programming course?
