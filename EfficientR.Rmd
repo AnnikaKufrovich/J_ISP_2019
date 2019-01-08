@@ -1,0 +1,65 @@
+---
+title: "Efficient R"
+author: "Annika Kufrovich"
+date: "January 8, 2019"
+output: html_document
+---
+
+## Notes
+
+* Benchmarking 
+    + Construct a function to be benchmarked 
+    + Time the function under different scenarios 
+    + Using system.time on a function gives the user, system, and elapsed time 
+    + User time is the CPU time charged for the execution of user instructions 
+    + System time is the CPU time charged for execution by the system on behalf of the calling process
+    + Elapsed time is the sum of the user and system time 
+    + `microbenchmark()` function from the microbenchmark packae can run multiple functions multiple times to see how long they take and compare them to eachother 
+    + The benchmarkme package allows you to run standard R code and see how yours stacks up against other R users through the `benchmark_sd()` function and then plotting the result. You can upload your result after 
+* Memory Allocation, don't ever grow a vector
+* The importance of vectorizing code 
+    + A general rule is to access optimized C or FORTRAN code as quickly as possible, the fewer functions called, the better 
+    + Seems to me like you should generally write as few lines of code as possible. A clunky function is not always the best way 
+* Data frames and Matrices, pretty much just use a matrix when you can 
+* Code Profiling 
+    + General Idea is to run code and, every few milliseconds, record what is being executed 
+    + `Rprof` works for this but is tricky to use
+    + The profvis package is better
+    + profiling ggplot is difficult, easier to profile base R
+* 
+
+## Practice/Application
+
+```{r, include=FALSE}
+library(microbenchmark)
+library(benchmarkme)
+library(profvis)
+```
+
+```{r}
+##res <- benchmark_std(runs = 3)
+##plot(res)
+```
+
+takes a bit to run this code, Apparently my laptop is slow :(
+
+
+oh well, lets profile my function from yesterday on the smallest county in Florida, Liberty County
+```{r}
+
+matching_dfs_addcol <- function(newdf, olddf) {
+  matching <- semi_join(olddf, newdf)
+  matching_col <- matching %>%
+    mutate(matched = TRUE)
+  not_matching <- anti_join(newdf, olddf)
+  not_matching_col <- not_matching %>%
+    mutate(matched = FALSE)
+  combined_df <- full_join(matching_col, not_matching_col)
+  combined_df
+}
+
+```
+
+
+
+## Goals for Tomorrow
