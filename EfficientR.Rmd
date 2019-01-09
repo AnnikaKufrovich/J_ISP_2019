@@ -14,7 +14,7 @@ output: html_document
     + User time is the CPU time charged for the execution of user instructions 
     + System time is the CPU time charged for execution by the system on behalf of the calling process
     + Elapsed time is the sum of the user and system time 
-    + `microbenchmark()` function from the microbenchmark packae can run multiple functions multiple times to see how long they take and compare them to eachother 
+    + `microbenchmark()` function from the microbenchmark package can run multiple functions multiple times to see how long they take and compare them to eachother 
     + The benchmarkme package allows you to run standard R code and see how yours stacks up against other R users through the `benchmark_sd()` function and then plotting the result. You can upload your result after 
 * Memory Allocation, don't ever grow a vector
 * The importance of vectorizing code 
@@ -25,8 +25,12 @@ output: html_document
     + General Idea is to run code and, every few milliseconds, record what is being executed 
     + `Rprof` works for this but is tricky to use
     + The profvis package is better
-    + profiling ggplot is difficult, easier to profile base R
-* 
+    + profiling ggplot is difficult, easier to profile base R 
+
+###Day 2 Notes 
+* CPU's now have multiple cores
+* By default, R only uses 1 core
++ YOu can use the parallel package to use multiple cores for sections of code as well as detect how many cores your computer has
 
 ## Practice/Application
 
@@ -80,12 +84,63 @@ new_lib$V28 <- NULL
 old_lib_lonlat$V28 <- NULL
 
 
+
+
 new_libvoters <- matching_dfs_addcol(new_lib, old_lib_lonlat)
 summary(new_libvoters$matched)
 ```
 
 
-maybe I should adjust this to only look at certain columns sice no one came up as "matched"
+###Day 2 Practice/Application
+
+maybe I should adjust this to only look at certain columns since no one came up as "matched", columns kept include columns related to voterID, name, and address
+
+```{r, warning=FALSE}
+nl_small <- new_lib %>%
+  select(V2:V12)
+ol_small <- old_lib_lonlat %>%
+  select(V2:V12, lon, lat)
+
+nl_voters_retry <- matching_dfs_addcol(nl_small, ol_small)
+summary(nl_voters_retry$matched)
+
+```
+
+It works! there was a lot of warning about coercing the "Factor" columns into character columns so I'll remove the name columns and set the address colums to character columns.
+
+```{r, warning=FALSE}
+nl_small2 <- nl_small %>%
+  select(V2, V7:V12)
+nl_small2$V7 <- as.character(nl_small2$V7)
+nl_small2$V8 <- as.character(nl_small2$V8)
+nl_small2$V9 <- as.character(nl_small2$V9)
+nl_small2$V10 <- as.character(nl_small2$V10)
+nl_small2$V11 <- as.character(nl_small2$V11)
+nl_small2$V12 <- as.character(nl_small2$V12)
+
+ol_small2 <- ol_small %>%
+  select(V2, V7:V12)
+ol_small2$V7 <- as.character(ol_small2$V7)
+ol_small2$V8 <- as.character(ol_small2$V8)
+ol_small2$V9 <- as.character(ol_small2$V9)
+ol_small2$V10 <- as.character(ol_small2$V10)
+ol_small2$V11 <- as.character(ol_small2$V11)
+ol_small2$V12 <- as.character(ol_small2$V12)
+
+
+nl_voters_retry2 <- matching_dfs_addcol(nl_small2, ol_small2)
+summary(nl_voters_retry2$matched)
+```
+
+now to profile my function
+
+```{r}
+profvis(nl_voters_retry2 <- matching_dfs_addcol(nl_small2, ol_small2))
+```
+
+seems like I don't have any bottlenecks yet, function is doing well
+
+
 
 
 ## Goals for Tomorrow
