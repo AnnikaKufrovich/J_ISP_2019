@@ -165,8 +165,17 @@ $(document).ready(function () {
 <h3>Day 2 Notes</h3>
 <ul>
 <li>CPU’s now have multiple cores</li>
-<li>By default, R only uses 1 core</li>
-<li>YOu can use the parallel package to use multiple cores for sections of code as well as detect how many cores your computer has</li>
+<li>By default, R only uses 1 core
+<ul>
+<li>You can use the parallel package to use multiple cores for sections of code as well as detect how many cores your computer has</li>
+<li>However, not all code can be run parallel by design, good rule of thumb is to figure out if you can run the code/loop forwards and backwards and still get the same result</li>
+<li>This can also be read whether each iteration is independent of the last in your code</li>
+<li>If you want to ue your computer for other things while running coe, like sending emails, don’t use all your cores, use total number of cores - 1</li>
+<li>Once you asign the number of cores to be used to a variable, make a cluster by putting you cores variable into a cluster with the <code>makeCluster()</code> function and assign that to a new variable</li>
+<li>Then, if possible switch the function you’re using to its parallel alternative, this will take in your cluter variable</li>
+<li>once done, stop the cluster with the <code>stopCluster</code> function</li>
+<li>if something is already fast multiple cores coul slow the function down</li>
+</ul></li>
 </ul>
 </div>
 </div>
@@ -223,11 +232,8 @@ summary(new_libvoters$matched)</code></pre>
 ol_small &lt;- old_lib_lonlat %&gt;%
   select(V2:V12, lon, lat)
 
-nl_voters_retry &lt;- matching_dfs_addcol(nl_small, ol_small)</code></pre>
-<pre><code>## Joining, by = c(&quot;V2&quot;, &quot;V3&quot;, &quot;V4&quot;, &quot;V5&quot;, &quot;V6&quot;, &quot;V7&quot;, &quot;V8&quot;, &quot;V9&quot;, &quot;V10&quot;, &quot;V11&quot;, &quot;V12&quot;)
-## Joining, by = c(&quot;V2&quot;, &quot;V3&quot;, &quot;V4&quot;, &quot;V5&quot;, &quot;V6&quot;, &quot;V7&quot;, &quot;V8&quot;, &quot;V9&quot;, &quot;V10&quot;, &quot;V11&quot;, &quot;V12&quot;)</code></pre>
-<pre><code>## Joining, by = c(&quot;V2&quot;, &quot;V3&quot;, &quot;V4&quot;, &quot;V5&quot;, &quot;V6&quot;, &quot;V7&quot;, &quot;V8&quot;, &quot;V9&quot;, &quot;V10&quot;, &quot;V11&quot;, &quot;V12&quot;, &quot;matched&quot;)</code></pre>
-<pre class="r"><code>summary(nl_voters_retry$matched)</code></pre>
+nl_voters_retry &lt;- matching_dfs_addcol(nl_small, ol_small)
+summary(nl_voters_retry$matched)</code></pre>
 <pre><code>##    Mode   FALSE    TRUE 
 ## logical     385    4241</code></pre>
 <p>It works! there was a lot of warning about coercing the “Factor” columns into character columns so I’ll remove the name columns and set the address colums to character columns.</p>
@@ -250,20 +256,14 @@ ol_small2$V11 &lt;- as.character(ol_small2$V11)
 ol_small2$V12 &lt;- as.character(ol_small2$V12)
 
 
-nl_voters_retry2 &lt;- matching_dfs_addcol(nl_small2, ol_small2)</code></pre>
-<pre><code>## Joining, by = c(&quot;V2&quot;, &quot;V7&quot;, &quot;V8&quot;, &quot;V9&quot;, &quot;V10&quot;, &quot;V11&quot;, &quot;V12&quot;)
-## Joining, by = c(&quot;V2&quot;, &quot;V7&quot;, &quot;V8&quot;, &quot;V9&quot;, &quot;V10&quot;, &quot;V11&quot;, &quot;V12&quot;)</code></pre>
-<pre><code>## Joining, by = c(&quot;V2&quot;, &quot;V7&quot;, &quot;V8&quot;, &quot;V9&quot;, &quot;V10&quot;, &quot;V11&quot;, &quot;V12&quot;, &quot;matched&quot;)</code></pre>
-<pre class="r"><code>summary(nl_voters_retry2$matched)</code></pre>
+nl_voters_retry2 &lt;- matching_dfs_addcol(nl_small2, ol_small2)
+summary(nl_voters_retry2$matched)</code></pre>
 <pre><code>##    Mode   FALSE    TRUE 
 ## logical     350    4276</code></pre>
 <p>now to profile my function</p>
 <pre class="r"><code>profvis(nl_voters_retry2 &lt;- matching_dfs_addcol(nl_small2, ol_small2))</code></pre>
-<pre><code>## Joining, by = c(&quot;V2&quot;, &quot;V7&quot;, &quot;V8&quot;, &quot;V9&quot;, &quot;V10&quot;, &quot;V11&quot;, &quot;V12&quot;)
-## Joining, by = c(&quot;V2&quot;, &quot;V7&quot;, &quot;V8&quot;, &quot;V9&quot;, &quot;V10&quot;, &quot;V11&quot;, &quot;V12&quot;)</code></pre>
-<pre><code>## Joining, by = c(&quot;V2&quot;, &quot;V7&quot;, &quot;V8&quot;, &quot;V9&quot;, &quot;V10&quot;, &quot;V11&quot;, &quot;V12&quot;, &quot;matched&quot;)</code></pre>
-<div id="htmlwidget-c8d83d4f63649239d84c" style="width:100%;height:600px;" class="profvis html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c8d83d4f63649239d84c">{"x":{"message":{"prof":{"time":[1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2],"depth":[8,7,6,5,4,3,2,1,8,7,6,5,4,3,2,1],"label":[".Call","semi_join_impl","semi_join.tbl_df","semi_join","as.data.frame","semi_join.data.frame","semi_join","matching_dfs_addcol",".Call","anti_join_impl","anti_join.tbl_df","anti_join","as.data.frame","anti_join.data.frame","anti_join","matching_dfs_addcol"],"filenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"linenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"memalloc":[24.7981719970703,24.7981719970703,24.7981719970703,24.7981719970703,24.7981719970703,24.7981719970703,24.7981719970703,24.7981719970703,25.0664291381836,25.0664291381836,25.0664291381836,25.0664291381836,25.0664291381836,25.0664291381836,25.0664291381836,25.0664291381836],"meminc":[0,0,0,0,0,0,0,0,0.268257141113281,0,0,0,0,0,0,0],"filename":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},"interval":10,"files":[],"prof_output":"C:\\Users\\TEENIE~1\\AppData\\Local\\Temp\\RtmpasCYzA\\file55cc3bff7ea1.prof","highlight":{"output":["^output\\$"],"gc":["^<GC>$"],"stacktrace":["^\\.\\.stacktraceo(n|ff)\\.\\.$"]},"split":"h"}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-6c180f4f98ff16287b48" style="width:100%;height:600px;" class="profvis html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6c180f4f98ff16287b48">{"x":{"message":{"prof":{"time":[1,1,1],"depth":[3,2,1],"label":["split_chain","%>%","matching_dfs_addcol"],"filenum":[null,null,null],"linenum":[null,null,null],"memalloc":[25.0200347900391,25.0200347900391,25.0200347900391],"meminc":[0,0,0],"filename":[null,null,null]},"interval":10,"files":[],"prof_output":"C:\\Users\\TEENIE~1\\AppData\\Local\\Temp\\RtmpMZ5UOT\\file30d45e8415d5.prof","highlight":{"output":["^output\\$"],"gc":["^<GC>$"],"stacktrace":["^\\.\\.stacktraceo(n|ff)\\.\\.$"]},"split":"h"}},"evals":[],"jsHooks":[]}</script>
 <p>seems like I don’t have any bottlenecks yet, function is doing well</p>
 </div>
 </div>

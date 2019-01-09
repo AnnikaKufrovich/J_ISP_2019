@@ -23,14 +23,21 @@ output: html_document
 * Data frames and Matrices, pretty much just use a matrix when you can 
 * Code Profiling 
     + General Idea is to run code and, every few milliseconds, record what is being executed 
-    + `Rprof` works for this but is tricky to use
-    + The profvis package is better
+    + `Rprof` works for this but is tricky to use 
+    + The profvis package is better 
     + profiling ggplot is difficult, easier to profile base R 
 
 ###Day 2 Notes 
-* CPU's now have multiple cores
-* By default, R only uses 1 core
-+ YOu can use the parallel package to use multiple cores for sections of code as well as detect how many cores your computer has
+* CPU's now have multiple cores 
+* By default, R only uses 1 core 
+    + You can use the parallel package to use multiple cores for sections of code as well as detect how many cores your computer has 
+    + However, not all code can be run parallel by design, good rule of thumb is to figure out if you can run the code/loop forwards and backwards and still get the same result
+    + This can also be read whether each iteration is independent of the last in your code
+    + If you want to ue your computer for other things while running coe, like sending emails, don't use all your cores, use total number of cores - 1 
+    + Once you asign the number of cores to be used to a variable, make a cluster by putting you cores variable into a cluster with the `makeCluster()` function and assign that to a new variable
+    + Then, if possible switch the function you're using to its parallel alternative, this will take in your cluter variable
+    + once done, stop the cluster with the `stopCluster` function
+    + if something is already fast multiple cores coul slow the function down
 
 ## Practice/Application
 
@@ -39,6 +46,7 @@ library(microbenchmark)
 library(benchmarkme)
 library(profvis)
 library(dplyr)
+library(parallel)
 ```
 
 ```{r}
@@ -95,7 +103,7 @@ summary(new_libvoters$matched)
 
 maybe I should adjust this to only look at certain columns since no one came up as "matched", columns kept include columns related to voterID, name, and address
 
-```{r, warning=FALSE}
+```{r, message=FALSE, warning=FALSE}
 nl_small <- new_lib %>%
   select(V2:V12)
 ol_small <- old_lib_lonlat %>%
@@ -108,7 +116,7 @@ summary(nl_voters_retry$matched)
 
 It works! there was a lot of warning about coercing the "Factor" columns into character columns so I'll remove the name columns and set the address colums to character columns.
 
-```{r, warning=FALSE}
+```{r, message=FALSE, warning=FALSE}
 nl_small2 <- nl_small %>%
   select(V2, V7:V12)
 nl_small2$V7 <- as.character(nl_small2$V7)
@@ -134,7 +142,7 @@ summary(nl_voters_retry2$matched)
 
 now to profile my function
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 profvis(nl_voters_retry2 <- matching_dfs_addcol(nl_small2, ol_small2))
 ```
 
