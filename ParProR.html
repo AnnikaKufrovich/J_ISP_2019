@@ -146,7 +146,19 @@ $(document).ready(function () {
 <li>To use doParallel you must pass your cluster information through <code>registerDoParallel()</code>, all you change in your foreach function is change from <code>%do%</code> to <code>%dopar%</code></li>
 <li>For doFuture you call the <code>registerDoFuture()</code> with no arguments, you then choose a plan in the <code>plan()</code> function, one example is <code>plan(cluster, workers = 3)</code> and then do foreach the same way as doParallel</li>
 </ul></li>
-<li></li>
+<li>future an future.apply packages
+<ul>
+<li>You can explicitly or implicitly define a future value by usingthe <code>future()</code> function or <code>%&lt;-%</code>, respectively</li>
+<li>future.apply pretty much has future versions of the apply functions</li>
+<li>Both till need a plan to be defined beforehand</li>
+</ul></li>
+<li>Load balancing and scheduling
+<ul>
+<li>Using the parallel package, you can split 10 tasks into 2 chunks using <code>splitIndices(10, 2)</code> and then passing it into the x argument of <code>clusterApply()</code></li>
+<li>With the foreach package you can use the <code>isplitvector()</code> function from the itertools package</li>
+<li>For the future.apply function you can use the argument <code>future.scheduling</code></li>
+</ul></li>
+<li>Choosing to stop and not complete reproducible chapter. This seems to have to do with reproducibility in random number generation which I’m not super interested in</li>
 </ul>
 </div>
 <div id="practiceapplication" class="section level2">

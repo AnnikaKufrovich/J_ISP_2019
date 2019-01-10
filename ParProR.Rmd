@@ -22,16 +22,27 @@ output: html_document
 * The .combine argument in `foreach()` allows the list produced to be combined in diferrent ways, you could rbind reuslts for a matrix sum your results by setting the argument to '+' 
 * The for each packae runs sequentially by default and needs and needs a package to give backend support for parallel programming. 2 packages that can do this are doParallel and doFuture. doSEQ also allows for switiching between parallel and sequential processing without changing the loop 
     + To use doParallel you must pass your cluster information through `registerDoParallel()`, all you change in your foreach function is change from `%do%` to `%dopar%` 
-    + For doFuture you call the `registerDoFuture()` with no arguments, you then choose a plan in the `plan()` function, one example is `plan(cluster, workers = 3)` and then do foreach the same way as doParallel 
-* 
-
-
+    + For doFuture you call the `registerDoFuture()` with no arguments, you then choose a plan in the `plan()`  function, one example is `plan(cluster, workers = 3)` and then do foreach the same way as doParallel 
+* future an future.apply packages 
+    + You can explicitly or implicitly define a future value by usingthe `future()` function or `%<-%`, respectively 
+    + future.apply pretty much has future versions of the apply functions 
+    + Both till need a plan to be defined beforehand 
+* Load balancing and scheduling 
+    + Using the parallel package, you can split 10 tasks into 2 chunks using `splitIndices(10, 2)` and then passing it into the x argument of `clusterApply()` 
+    + With the foreach package you can use the `isplitvector()` function from the itertools package 
+    + For the future.apply function you can use the argument `future.scheduling`
+* Choosing to stop and not complete reproducible chapter. This seems to have to do with reproducibility in random number generation which I'm not super interested in
 
 
 ## Practice/Application
 
-```{r}
-
+```{r, include=FALSE}
+library(foreach)
+library(doParallel)
+library(doFuture)
+library(future)
+library(future.apply)
+library(itertools)
 ```
 
 
