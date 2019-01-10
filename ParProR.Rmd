@@ -1,0 +1,39 @@
+---
+title: "Parallel Programming"
+author: "Annika Kufrovich"
+date: "January 9, 2019"
+output: html_document
+---
+
+
+## Notes
+* For parallel programming/processing, you can split computation problems by task or by data 
+* Wording in practice section was kind of confusing 
+* First chapter mainly goes over functions that can be parallelized, had a bit of a hard time following the functions but I was a bit distracted
+* Some packages besides parallel that have parallel support for big data are sparklyr, iotools, and pbdR 
+* packages with support for embarissingly parallel functions are foreach, future.apply, snow, snowFT, snowfall, and future
+* There are versions of the apply functions in the parallel package that enure the load is balanced between cores, these end with LB 
+* Clusters start with an empty environment, no libraries loaded and no objects from the lobal environment are known 
+* `clusterCall()` calls a function on all nodes in the cluster, useful for `library()`
+* `clusterEvalQ()` evaluates a literal expression on all nodes, good for `library()` and defining objects 
+* `clusterExport()` exports objects that already exit in the global environment to each node 
+* It's more efficient to chunk data on the nodes end, preload the data to nodes and then tell nodes which sections to do 
+* `foreach()` function from the foreach package allows for using %do% which seems to be an alternative way of piping for parallel processing 
+* The .combine argument in `foreach()` allows the list produced to be combined in diferrent ways, you could rbind reuslts for a matrix sum your results by setting the argument to '+' 
+* The for each packae runs sequentially by default and needs and needs a package to give backend support for parallel programming. 2 packages that can do this are doParallel and doFuture. doSEQ also allows for switiching between parallel and sequential processing without changing the loop 
+    + To use doParallel you must pass your cluster information through `registerDoParallel()`, all you change in your foreach function is change from `%do%` to `%dopar%` 
+    + For doFuture you call the `registerDoFuture()` with no arguments, you then choose a plan in the `plan()` function, one example is `plan(cluster, workers = 3)` and then do foreach the same way as doParallel 
+* 
+
+
+
+
+## Practice/Application
+
+```{r}
+
+```
+
+
+##Goals for tomorrow
+
