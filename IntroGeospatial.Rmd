@@ -1,0 +1,37 @@
+---
+title: "Geospatial Notes"
+author: "Annika Kufrovich"
+date: "January 11, 2019"
+output: html_document
+---
+
+
+## Notes
+* Quick look at how to use ggmaps with ggplot to with a dataset on houses sold in corvallis 
+* To add aesthetics `ggmap()` add the argument `base_layer) 
+* You can also use the qmap function 
+* Types of spatial data include point, line, polygon, and raster 
+  + Line: collections of points in a line connected by lines 
+  + Polygon: points associated with an area, ordered points matter 
+  + Raster: gridded, think satellite data and a rectangular grid it captured 
+* sp package can store objects spatially for point, line, and polygon data 
+* S4 is one of the object oriented systems in R, some object oriented concepts are: 
+    + Class: defines a type of object, their attributes and their relationhip to other classses 
+    + Methods: are functions, their behaviour depends on the class of object used as input 
+* S4 objects have slots, which can store anything 
+    + To access slots you can use a dedicated method the way you would use a function, ie use the slot you want to access as a function 
+    + You could also reference the object, followed by the slot use the @ symbol in the sameway you would use the $ for data frame 
+    + Another option is to use the `slot()` function with the object as the first arument, and the second argument is the slot you want to access in quotes 
+* 
+
+
+
+
+## Practice/Application
+
+```{r, include=FALSE}
+
+```
+
+
+##Goals for tomorrow
