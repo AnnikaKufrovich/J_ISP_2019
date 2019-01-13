@@ -153,13 +153,40 @@ $(document).ready(function () {
 <li>A more intuitive way of storing raster data is in a matrix where each cell coresponds to a cell in the grid</li>
 <li>Quick review of how to use color in plots</li>
 <li>tmap uses the package classInt to bin continuous variables</li>
+<li>Reading in spatial data
+<ul>
+<li>Vector data (points, lines, and polygons) are most commonly stopred in shape</li>
+<li>The rgdal package has the <code>readOGR()</code> function that cabn read vector formats</li>
+<li>The same package has the <code>readGDAL()</code> function for reading in raster data, but the <code>raster()</code> function from the raster package works better</li>
+</ul></li>
+<li>Coordinate Reference Systems
+<ul>
+<li>The function <code>proj4string()</code> provides CRS info</li>
+<li>There are different ways to code longitude and latitude</li>
+<li>WGS84 is typically used for the datum and ellps (ellipsoids) for global data sets while NAD83 and GRS80, respectively, are common for US datasets</li>
+</ul></li>
+<li>Adding data to Spatial objects
+<ul>
+<li>Look at your data and the str(<a href="mailto:yourspatialobject@data">yourspatialobject@data</a>) and find a combatible key. ex if you’re looking at NYC tracts, find which object in your polygon has the tract keys you have</li>
+<li>Combine them by using the <code>SpatialPolygonsDataFrame()</code> function with arguments Sr (spatial object to be matched), data (data to be matched), and match.ID = TRUE so that you can be sure things match up</li>
+<li><code>merge()</code> function from sp package is also useful</li>
+</ul></li>
+<li>Review of data visualization ideals</li>
 </ul>
 </div>
 <div id="practiceapplication" class="section level2">
 <h2>Practice/Application</h2>
+<p>Ideas on how I could apply this</p>
+<ul>
+<li>pick a coordinate system for the FLorida voter data</li>
+<li>Maybe take a polygon of florida from tigris package to store spatial data?</li>
+</ul>
 </div>
 <div id="goals-for-tomorrow" class="section level2">
 <h2>Goals for tomorrow</h2>
+<ul>
+<li>Start Spatial Analysis course, finish at least 3 chapters</li>
+</ul>
 </div>
 
 

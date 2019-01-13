@@ -24,10 +24,22 @@ output: html_document
     + Another option is to use the `slot()` function with the object as the first arument, and the second argument is the slot you want to access in quotes 
 * There's a heirarchy in sp objects for polygons, lines, and points 
 * tmap is like ggplot2 in its additive way of working with plots, but it expects data in spatial objects rather than dataframes 
-* A more intuitive way of storing raster data is in a matrix where each cell coresponds to a cell in the grid
-* Quick review of how to use color in plots
-* tmap uses the package classInt to bin continuous variables
-
+* A more intuitive way of storing raster data is in a matrix where each cell coresponds to a cell in the grid 
+* Quick review of how to use color in plots 
+* tmap uses the package classInt to bin continuous variables 
+* Reading in spatial data 
+    + Vector data (points, lines, and polygons) are most commonly stopred in shape 
+    + The rgdal package has the `readOGR()` function that cabn read vector formats 
+    + The same package has the `readGDAL()` function for reading in raster data, but the `raster()` function from the raster package works better 
+* Coordinate Reference Systems 
+    + The function `proj4string()` provides CRS info 
+    + There are different ways to code longitude and latitude 
+    + WGS84 is typically used for the datum and ellps (ellipsoids) for global data sets while NAD83 and GRS80, respectively, are common for US datasets 
+* Adding data to Spatial objects 
+    + Look at your data and the str(yourspatialobject@data) and find a combatible key. ex if you're looking at NYC tracts, find which object in your polygon has the tract keys you have 
+    + Combine them by using the `SpatialPolygonsDataFrame()` function with arguments Sr (spatial object to be matched), data (data to be matched), and match.ID = TRUE so that you can be sure things match up 
+    + `merge()` function from sp package is also useful 
+* Review of data visualization ideals
 
 
 ## Practice/Application
@@ -39,7 +51,13 @@ library(ggplot2)
 library(rasterVis)
 library(RColorBrewer)
 library(classInt)
+library(tigris)
 ```
 
+Ideas on how I could apply this
+
+* pick a coordinate system for the FLorida voter data
+* Maybe take a polygon of florida from tigris package to store spatial data?
 
 ##Goals for tomorrow
+* Start Spatial Analysis course, finish at least 3 chapters
