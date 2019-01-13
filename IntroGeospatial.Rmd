@@ -22,15 +22,23 @@ output: html_document
     + To access slots you can use a dedicated method the way you would use a function, ie use the slot you want to access as a function 
     + You could also reference the object, followed by the slot use the @ symbol in the sameway you would use the $ for data frame 
     + Another option is to use the `slot()` function with the object as the first arument, and the second argument is the slot you want to access in quotes 
-* 
-
+* There's a heirarchy in sp objects for polygons, lines, and points 
+* tmap is like ggplot2 in its additive way of working with plots, but it expects data in spatial objects rather than dataframes 
+* A more intuitive way of storing raster data is in a matrix where each cell coresponds to a cell in the grid
+* Quick review of how to use color in plots
+* tmap uses the package classInt to bin continuous variables
 
 
 
 ## Practice/Application
 
 ```{r, include=FALSE}
-
+library(sp)
+library(tmap)
+library(ggplot2)
+library(rasterVis)
+library(RColorBrewer)
+library(classInt)
 ```
 
 
