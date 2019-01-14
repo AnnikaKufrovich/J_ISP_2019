@@ -1,0 +1,58 @@
+---
+title: "Spatial Analysis with sf and raster"
+author: "Annika Kufrovich"
+date: "January 13, 2019"
+output: html_document
+---
+
+## Notes
+* Read in vector data with the function `st_read()` from the sf package 
+    + simplifies things by just taking a filepath and figurin out the proper fomat from the . suffix 
+* Read in raster data with the the either the `raster()` or `brick` function from the raster package 
+    + `raster()` function reads in single-band rasters 
+    + `brick()` function reads in multi-band rasters 
+    + Single-band rasters have a single set of values for each grid cell, ex elevation or land use rasters 
+    + Multi-band rasters may have multiple values for each grid cell, ex satellite images or aerial photos which woul be pslit up by bands of light 
+* To write data use `st_write()` for vector data and `writeRaster()` for raster data
+* sf package stores spatial objects as dataframes which allow the use of dplyr to work with them 
+    + These dataframes include metadata like CRS and geometry is stored in a list column 
+    + makes sens to have a list column becaue each polygon can have varying amounts of information on its geometry 
+    + you can ue the `is.list()` function to figure out which columns are lists 
+    + use the `st_geometry()` function to pull out the geometry of a spatial object before plotting 
+* Raster objects will be tored with the class rasterLayer or rasterBrick, for single- and multi-band rasters respectively 
+    + You can extract metadata from these with the functions `extent()` for (variable ranges), `crs()`, `ncell()`, and `nlayerS()` 
+    + Check if raster values are in memory with `inMemory()` 
+    + Use `getValues()` function to et values if they are not in memory, will become a vector for a single-layer raster and a matrix for a multi-layer raster 
+    + `plotRGB()` can combine multi-layer rasters based on Red, Green, and Blue light to create a single, true color image 
+* Review of CRS 
+    + Use `st_crs()` for vectors and `crs()` for rasters 
+* `st_simplify()` reduces the size of large shape files without reducing vertices in such a way that the shape is significantly different, makes analysis go faster. You can check ize with `objectsize()`
+* Converting between sp andf sf 
+    + After reading in your file with st_read, convert to sp object with `as(mysfobject, class = "Spatial")`
+    + for the reverse use `st_as_sf(myspobject)` 
+* COnverting to and from coordinates 
+    + After reading in dataframe with lon and lat, use `st_as_sf(mydf, coords = c("lon", "lat"))`, you'll aso need to add a crs argument to specify the coordinate system 
+    + `st_write(myspatialfile, "newfilename.csv", layer_options = "GEOMETRY=AS_XY")` to pass coordinates into your csv file 
+* Manipulating raster layers 
+    + to simplify large rasters you can use the `aggregate()` function from the raster package with the argument `fact` for the factor you want to reduce resolution by and `fun` to specify how you want to aggregate 
+    + This is another way to reduce file size 
+    + `reclassify()` function, takes in a matrix for the argument `rcl` to change a single or set of values to a new value, have multiple rows for multiple rules
+
+
+
+## Practice/Application
+
+```{r, include=FALSE}
+library(sf)
+library(raster)
+library(ggplot2)
+library(tmap)
+library(dplyr)
+```
+
+
+## Goals for Tomorrow
+
+
+
+
