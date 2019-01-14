@@ -36,8 +36,27 @@ output: html_document
 * Manipulating raster layers 
     + to simplify large rasters you can use the `aggregate()` function from the raster package with the argument `fact` for the factor you want to reduce resolution by and `fun` to specify how you want to aggregate 
     + This is another way to reduce file size 
-    + `reclassify()` function, takes in a matrix for the argument `rcl` to change a single or set of values to a new value, have multiple rows for multiple rules
-
+    + `reclassify()` function, takes in a matrix for the argument `rcl` to change a single or set of values to a new value, have multiple rows for multiple rules 
+* Buffers and Centroids 
+    + General rule: Layers should use a projected CRS, with the crs being the same between layers if there are multiple
+    + For sf, buffer function is `st_buffer()` with the first argument being the buffer radius using the units of your CRS 
+    + You can compute centroids with `st_centroid()` which is generally run with one argument (data argument) 
+* Bounding Boxes, dissolve features and create a convex hull 
+    + Regions can be defined as rectangles or a tighter polygon with a convex hull 
+    + You can compute bounding box coordinates with the function `st_bbox()` 
+    + you can intead create a bouning box with `st_make_grid` which normally makes a large grid, however you can specify the argument `n = 1` to make a single polygon bounding box 
+    + `st_union()` disolves features, for polygons the function takes a et of polygon and dissolves them into a single feature, for points it will cluster individual points int a multipoint geometry 
+    + The latter is a required step for some computations like convex hull 
+* Multi-layer geoprocessing and relationships 
+    + A spatial join joins objects based on geography, you can do this with `st_join()`, where the first argument i the object you want as an output and the second is the object with the attributes you want added 
+    + `st_intersects()` and `st_contains()` could help you determine what roads intersect or are contained in our polygon(s) of interest, must subset after each function 
+    + `st_intersections()` is like `st_intersect()` but cuts off at the boundaries of the polygon 
+    + `st_distance()` can help us find the distance between features, such as a road and a centroid, you just input  your layers to the function and it will include the distance from each feature in one layer to each feature in another layer as a matrix 
+* Geoprocessing with rasters 
+    + Raster package hasn't been updated to use sf objects, must convert with `as()` function 
+    + `mask()` function takes raster object and a mask object and will only keep the values sithin the mask object, setting all other values to NA 
+    + `extract()` can take points or polygons, with polygons able to take a function to aggregate inthe `fun` argument 
+    + `overlay()` takes raster layers and does raster math 
 
 
 ## Practice/Application
@@ -52,7 +71,8 @@ library(dplyr)
 
 
 ## Goals for Tomorrow
-
+* Finish Spatial analysis course
+* Work on geocoding function and try to decide on a way to analyze the data post-geocoding
 
 
 

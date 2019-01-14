@@ -176,6 +176,34 @@ $(document).ready(function () {
 <li>This is another way to reduce file size</li>
 <li><code>reclassify()</code> function, takes in a matrix for the argument <code>rcl</code> to change a single or set of values to a new value, have multiple rows for multiple rules</li>
 </ul></li>
+<li>Buffers and Centroids
+<ul>
+<li>General rule: Layers should use a projected CRS, with the crs being the same between layers if there are multiple</li>
+<li>For sf, buffer function is <code>st_buffer()</code> with the first argument being the buffer radius using the units of your CRS</li>
+<li>You can compute centroids with <code>st_centroid()</code> which is generally run with one argument (data argument)</li>
+</ul></li>
+<li>Bounding Boxes, dissolve features and create a convex hull
+<ul>
+<li>Regions can be defined as rectangles or a tighter polygon with a convex hull</li>
+<li>You can compute bounding box coordinates with the function <code>st_bbox()</code></li>
+<li>you can intead create a bouning box with <code>st_make_grid</code> which normally makes a large grid, however you can specify the argument <code>n = 1</code> to make a single polygon bounding box</li>
+<li><code>st_union()</code> disolves features, for polygons the function takes a et of polygon and dissolves them into a single feature, for points it will cluster individual points int a multipoint geometry</li>
+<li>The latter is a required step for some computations like convex hull</li>
+</ul></li>
+<li>Multi-layer geoprocessing and relationships
+<ul>
+<li>A spatial join joins objects based on geography, you can do this with <code>st_join()</code>, where the first argument i the object you want as an output and the second is the object with the attributes you want added</li>
+<li><code>st_intersects()</code> and <code>st_contains()</code> could help you determine what roads intersect or are contained in our polygon(s) of interest, must subset after each function</li>
+<li><code>st_intersections()</code> is like <code>st_intersect()</code> but cuts off at the boundaries of the polygon</li>
+<li><code>st_distance()</code> can help us find the distance between features, such as a road and a centroid, you just input your layers to the function and it will include the distance from each feature in one layer to each feature in another layer as a matrix</li>
+</ul></li>
+<li>Geoprocessing with rasters
+<ul>
+<li>Raster package hasn’t been updated to use sf objects, must convert with <code>as()</code> function</li>
+<li><code>mask()</code> function takes raster object and a mask object and will only keep the values sithin the mask object, setting all other values to NA</li>
+<li><code>extract()</code> can take points or polygons, with polygons able to take a function to aggregate inthe <code>fun</code> argument</li>
+<li><code>overlay()</code> takes raster layers and does raster math</li>
+</ul></li>
 </ul>
 </div>
 <div id="practiceapplication" class="section level2">
@@ -183,6 +211,10 @@ $(document).ready(function () {
 </div>
 <div id="goals-for-tomorrow" class="section level2">
 <h2>Goals for Tomorrow</h2>
+<ul>
+<li>Finish Spatial analysis course</li>
+<li>Work on geocoding function and try to decide on a way to analyze the data post-geocoding</li>
+</ul>
 </div>
 
 
