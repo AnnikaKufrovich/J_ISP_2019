@@ -129,7 +129,27 @@ $(document).ready(function () {
 <div id="notes" class="section level2">
 <h2>Notes</h2>
 <ul>
+<li>Overview of different types of spatial data</li>
+<li>spatstat package is useful for point-pattern analyis</li>
+<li>Events are points on your plane where something is happening</li>
+<li>Points are any location in the pace reardles of whether or not something is happening</li>
+<li>A Window is your closed area of study, events outside the window are unobserved and do not contribute to your analysis</li>
+<li>A Spatial Point Pattern is the set of observed events and the window</li>
+<li>A Spatial POint Proces is like a random number enerator for events in a window</li>
+<li>Spatial point pattern analyis is spent mostly making inferences about spatial point process</li>
+<li>Marks are the different kind of data you have within your window, can be continuous or categorical</li>
+<li>spatstat stores spatial point patterns in planr point pattern (ppp) objects</li>
+<li>Complete spatial randomnes is when there is no dicernable pattern in your window, you can test for thi with the quadrat test</li>
+<li>Quadrat test is much like the null hypothesis test, just specific to spatial data. Divides your window into parts, typically 20 or so squares and if it’s truely random the counts of event in each square will match a poisson ditribution. They’ll have a tet statitic with a chi-squared distribution</li>
+<li>Alternatives to the quadrat test
+<ul>
+<li>Nearest Neighbors ditribution which looks for the ditance to the nearest event for each event</li>
+<li>Ripley’s reduced econd moment measurement or K function, looks for the number of events in a circle of radius d for each event</li>
+</ul></li>
+<li>Bivariate Point Patterns
+<ul>
 <li></li>
+</ul></li>
 </ul>
 </div>
 <div id="practiceapplication" class="section level2">
