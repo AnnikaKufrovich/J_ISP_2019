@@ -1,0 +1,21 @@
+---
+title: "Spatial Statistics"
+author: "Annika Kufrovich"
+date: "January 16, 2019"
+output: html_document
+---
+
+
+## Notes 
+
+* 
+
+## Practice/Application 
+
+```{r, include = FALSE}
+
+```
+
+
+## Goals for tomorrow 
+
