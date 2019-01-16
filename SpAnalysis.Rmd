@@ -57,7 +57,7 @@ output: html_document
     + `mask()` function takes raster object and a mask object and will only keep the values sithin the mask object, setting all other values to NA 
     + `extract()` can take points or polygons, with polygons able to take a function to aggregate inthe `fun` argument 
     + `overlay()` takes raster layers and does raster math 
-
+* No Day 2 notes, all review and application
 
 ## Practice/Application
 
@@ -68,6 +68,10 @@ library(ggplot2)
 library(tmap)
 library(dplyr)
 ```
+
+More Ideas:
+Add my geocoded voters to an sf object 
+Maybe also add precinct location data and look at distance between voters and voting location?
 
 
 ## Goals for Tomorrow
