@@ -22,16 +22,35 @@ output: html_document
 * Quadrat test is much like the null hypothesis test, just specific to spatial data. Divides your window into parts, typically 20 or so squares and if it's truely random the counts of event in each square will match a poisson ditribution. They'll have a tet statitic with a chi-squared distribution 
 * Alternatives to the quadrat test 
     + Nearest Neighbors ditribution which looks for the ditance to the nearest event for each event 
-    + Ripley's reduced econd moment measurement or K function, looks for the number of events in a circle of radius d for each event 
+    + Ripley's reduced second moment measurement or K function, looks for the number of events in a circle of radius d for each event 
 * Bivariate Point Patterns 
-    + 
+    + Need events of interest (like people who are sick or who voted) and of those who do not fit your criteria of interest (not sick or didn't vote, ie control group) to be sure that you aren't just seeing something more often because more people live there 
+    + This can be expanded to multivariate data 
+    + There's a bivariate version of the nearest neighbor function that looks for the nearest neighbor that is not in the same group as the event in question (sick person's nearest neighbor would be the nearest healthy person to be a healthy person) 
+    + Bivariate K function is cros category like nearest neighbor, looking for controls within a certain distance if the central event is non-control 
+    + Null Hypothesis in this case is that the proportion of each type of event is uniform over space 
+    + Kernel smoothing shows intensity, can use the denity function in spatstat 
+* Spatial Segregation 
+    + What it sounds like, we need a significance tet to prove spatial segregation
+    + Spatialkernel which helps us determine this does not work with ppp objects
+* Space-Time Data 
+    + extra dimenison to space data, needs to be in a number rather than data format (ie number of days since an origin time) 
+* Space-Time Clustering 
+    + When space-time data are no longer independent from eachother (ie event happen in 1 place 1 day and the next day are in another place) 
+    + There's a space-time K function to test for this 
+    + Talked a lot about null hypothesis testing 
+* 
+
 
 ## Practice/Application 
 
 ```{r, include = FALSE}
 library(spatstat)
+library(spatialkernel)
 ```
 
+* Could do bivariate analysis of registered voters who voted in a certain election vs didn't vote, would need to figure out how to get my data into a ppp 
+* Maybe I could get my window from the tigris package and just have my geocoded data be the marks?
 
 ## Goals for tomorrow 
 
