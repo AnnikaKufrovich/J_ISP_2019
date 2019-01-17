@@ -1,0 +1,39 @@
+---
+title: "Census Data"
+author: "Annika Kufrovich"
+date: "January 17, 2019"
+output: html_document
+---
+
+
+## Notes
+
+* Quick note: this course, like the parallel programming one, does not have a visual of the person talking to you 
+* Overview of Census data 
+* `geography` paramater in tidycenus defines level of aggregration, this could be by state, county, or tract and many others, here's a breakdown <https://walkerke.github.io/tidycensus/articles/basic-usage.html#geography-in-tidycensus> 
+    + There are optional `state` and `county` subsetting aruments so that you aren't returned aggregate date for the whole US 
+    + you can also specify whether your data comes in long or wide format with `output` 
+* You can look for census variables here<https://censusreporter.org/> or by using the `loadvariables` function to download and browe census variables from the census website. You can then use the tidyverse package to narrow your search 
+* Review of ggplot2 
+* 
+
+
+
+## Practice/Application
+
+```{r, include=FALSE}
+library(tidycensus)
+library(tidyverse)
+library(tigris)
+library(ggplot2)
+
+
+#census_api_key("864d0c376476571c0dee5dff3422e4a3b75ab093", install = TRUE)
+```
+
+
+
+## Goals for tomorrow 
+
+
+
