@@ -27,7 +27,7 @@ output: html_document
     + Need events of interest (like people who are sick or who voted) and of those who do not fit your criteria of interest (not sick or didn't vote, ie control group) to be sure that you aren't just seeing something more often because more people live there 
     + This can be expanded to multivariate data 
     + There's a bivariate version of the nearest neighbor function that looks for the nearest neighbor that is not in the same group as the event in question (sick person's nearest neighbor would be the nearest healthy person to be a healthy person) 
-    + Bivariate K function is cros category like nearest neighbor, looking for controls within a certain distance if the central event is non-control 
+    + Bivariate K function is cross category like nearest neighbor, looking for controls within a certain distance if the central event is non-control 
     + Null Hypothesis in this case is that the proportion of each type of event is uniform over space 
     + Kernel smoothing shows intensity, can use the denity function in spatstat 
 * Spatial Segregation 
@@ -39,7 +39,16 @@ output: html_document
     + When space-time data are no longer independent from eachother (ie event happen in 1 place 1 day and the next day are in another place) 
     + There's a space-time K function to test for this 
     + Talked a lot about null hypothesis testing 
-* 
+* Areal Statistics 
+    + Cartograms can vary size of a state/distric/etc based on a measure like population. They look pretty wonky 
+    + To look for similarities between reions youmight want to look and regions they share a border with or are within a certain distance of 
+* Spatial Health Data 
+    + Not as interested in using this, not taking notes on this section 
+* GLMs in space 
+    + Review of poison distribution 
+* Correlation in Spatial GLMs 
+    + quick intro to bayesian statistics but nothing really new
+
 
 
 ## Practice/Application 
@@ -47,10 +56,14 @@ output: html_document
 ```{r, include = FALSE}
 library(spatstat)
 library(spatialkernel)
+library(spdep)
+library(R2BayesX)
 ```
 
 * Could do bivariate analysis of registered voters who voted in a certain election vs didn't vote, would need to figure out how to get my data into a ppp 
 * Maybe I could get my window from the tigris package and just have my geocoded data be the marks?
+* See if I could get my data to a manageable state that allows for a glm with control 
 
 ## Goals for tomorrow 
-
+* Start/FInish Datacamp course on Census Data
+* Get liberty county data eocoded and start figuring out how to et it into a workable state for geospatial analysis

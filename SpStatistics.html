@@ -151,7 +151,7 @@ $(document).ready(function () {
 <li>Need events of interest (like people who are sick or who voted) and of those who do not fit your criteria of interest (not sick or didn’t vote, ie control group) to be sure that you aren’t just seeing something more often because more people live there</li>
 <li>This can be expanded to multivariate data</li>
 <li>There’s a bivariate version of the nearest neighbor function that looks for the nearest neighbor that is not in the same group as the event in question (sick person’s nearest neighbor would be the nearest healthy person to be a healthy person)</li>
-<li>Bivariate K function is cros category like nearest neighbor, looking for controls within a certain distance if the central event is non-control</li>
+<li>Bivariate K function is cross category like nearest neighbor, looking for controls within a certain distance if the central event is non-control</li>
 <li>Null Hypothesis in this case is that the proportion of each type of event is uniform over space</li>
 <li>Kernel smoothing shows intensity, can use the denity function in spatstat</li>
 </ul></li>
@@ -170,7 +170,23 @@ $(document).ready(function () {
 <li>There’s a space-time K function to test for this</li>
 <li>Talked a lot about null hypothesis testing</li>
 </ul></li>
-<li></li>
+<li>Areal Statistics
+<ul>
+<li>Cartograms can vary size of a state/distric/etc based on a measure like population. They look pretty wonky</li>
+<li>To look for similarities between reions youmight want to look and regions they share a border with or are within a certain distance of</li>
+</ul></li>
+<li>Spatial Health Data
+<ul>
+<li>Not as interested in using this, not taking notes on this section</li>
+</ul></li>
+<li>GLMs in space
+<ul>
+<li>Review of poison distribution</li>
+</ul></li>
+<li>Correlation in Spatial GLMs
+<ul>
+<li>quick intro to bayesian statistics but nothing really new</li>
+</ul></li>
 </ul>
 </div>
 <div id="practiceapplication" class="section level2">
@@ -178,10 +194,15 @@ $(document).ready(function () {
 <ul>
 <li>Could do bivariate analysis of registered voters who voted in a certain election vs didn’t vote, would need to figure out how to get my data into a ppp</li>
 <li>Maybe I could get my window from the tigris package and just have my geocoded data be the marks?</li>
+<li>See if I could get my data to a manageable state that allows for a glm with control</li>
 </ul>
 </div>
 <div id="goals-for-tomorrow" class="section level2">
 <h2>Goals for tomorrow</h2>
+<ul>
+<li>Start/FInish Datacamp course on Census Data</li>
+<li>Get liberty county data eocoded and start figuring out how to et it into a workable state for geospatial analysis</li>
+</ul>
 </div>
 
 
