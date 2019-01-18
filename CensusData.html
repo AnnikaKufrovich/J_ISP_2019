@@ -147,7 +147,20 @@ $(document).ready(function () {
 <li>tidycensus has functions like <code>moe_sum()</code> and <code>moe_product()</code> for calculating combined moe’s</li>
 <li>Goes over visualizing moe’s</li>
 </ul></li>
-<li></li>
+<li>Census Geography and tigris basics
+<ul>
+<li>You can retrieve shape files, as sp objects, using tigris functions</li>
+</ul></li>
+<li>Customizing tigris functions
+<ul>
+<li>Cartographic boundary shape files represent the US coastline more acurately, you can et these by etting the <code>cb</code> arument equal to true</li>
+<li>By calling `options(tigris_class = “sf”), you can get f rather than sp objects</li>
+<li>Can load objects faster with <code>options(tigris_use_cache = TRUE)</code></li>
+<li>If doing analyses over time, may want to specify year since boundaries of counties, but more often tracts, can change over time</li>
+</ul></li>
+<li><code>rbind_tigris()</code> combines like attributed patial data sets</li>
+<li>Review of joining data from a data frame</li>
+<li>Review of ggplot2 plotting</li>
 </ul>
 </div>
 <div id="practiceapplication" class="section level2">
