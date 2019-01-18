@@ -1,0 +1,134 @@
+---
+title: "ISP Final Project"
+author: "Annika Kufrovich"
+date: "January 18, 2019"
+output: html_document
+---
+
+
+```{r, include=FALSE}
+library(tidycensus)
+library(tidyverse)
+library(tigris)
+library(ggplot2)
+library(ggmap)
+library(purrr)
+library(dplyr)
+```
+
+
+## Function quick look 
+
+Test Dataframes
+
+```{r, warning=FALSE, message=FALSE}
+test1b <- data.frame(numbers = 1:8, letters = c("a", "b", "c", "d", "a", "b", "c", "d"))
+test4b <- data.frame(numbers = 1:8, letters = c("a", "b", "c", "d", "a", "b", "c", "e"), lon = c(12, 31, 64, 38, 89, 73, 91, 21))
+```
+
+Function
+
+```{r, warning=FALSE, message=FALSE}
+matching_dfs_addcol <- function(newdf, olddf) {
+  matching <- semi_join(olddf, newdf)
+  matching_col <- matching %>%
+    mutate(matched = TRUE)
+  not_matching <- anti_join(newdf, olddf)
+  not_matching_col <- not_matching %>%
+    mutate(matched = FALSE)
+  combined_df <- full_join(matching_col, not_matching_col)
+  combined_df
+}
+
+new_func_test <- matching_dfs_addcol(test1b, test4b)
+new_func_test
+```
+
+
+
+## Geocoding 
+
+```{r}
+new_lib <- read.delim("C:/Users/TeenieTiny/Desktop/2nd Year/Data/Voter_Registration_20181113/20181113_VoterDetail/LIB_20181113.txt", header=FALSE)
+
+
+
+#this didn't work with mutate_geocode, alternatives with commas didn't help
+#new_lib_addres <- new_lib %>% 
+#  mutate(address = paste(V8, V10, V12, sep = " "))
+
+
+#thought this would fix it, it didn't, alternatives with commas didn't help
+#new_lib_addres <- new_lib %>% 
+#  mutate(address = paste(V8, V10, V12, sep = ", "), stringsAsFactors = FALSE)
+
+
+new_lib_addres <- new_lib %>% 
+  mutate(address = paste(V8, V10, "FL", sep = ", "))
+```
+
+
+
+```{r, warning=FALSE, message=FALSE}
+nl_p1 <- new_lib_addres %>% 
+  slice(1:1000)
+
+nl_geocode_p1 <- nl_p1 %>%
+  mutate_geocode(address, source = "dsk")
+
+
+
+nl_p2 <- new_lib_addres %>%
+  slice(1001:2000)
+
+nl_geocode_p2 <- nl_p2 %>%
+  mutate_geocode(address, source = "dsk")
+
+
+
+
+nl_p3 <- new_lib_addres %>%
+  slice(2001:3000)
+
+nl_geocode_p3 <- nl_p3 %>%
+  mutate_geocode(address, source = "dsk")
+
+
+
+nl_p4 <- new_lib_addres %>%
+  slice(3001:4000)
+
+nl_geocode_p4 <- nl_p4 %>%
+  mutate_geocode(address, source = "dsk")
+
+
+
+nl_p5 <- new_lib_addres %>%
+  slice(4001:4626)
+
+nl_geocode_p5 <- nl_p5 %>%
+  mutate_geocode(address, source = "dsk")
+
+
+
+#I should have made a function, making this one and will test if it works later
+geocoding <- function(df, address_col, seq) {
+  sliced <- df %>% 
+    slice(seq)
+  geocoded <- sliced %>% 
+    mutate_geocode(address_col, source = "dsk")
+}
+
+
+
+nl_join <- full_join(nl_geocode_p5, full_join(nl_geocode_p4, full_join(nl_geocode_p3, full_join(nl_geocode_p1, nl_geocode_p2))))
+
+```
+
+
+## Getting shape of liberty county
+
+
+
+
+
