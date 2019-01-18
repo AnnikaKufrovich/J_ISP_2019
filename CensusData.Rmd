@@ -15,6 +15,13 @@ output: html_document
     + you can also specify whether your data comes in long or wide format with `output` 
 * You can look for census variables here<https://censusreporter.org/> or by using the `loadvariables` function to download and browe census variables from the census website. You can then use the tidyverse package to narrow your search 
 * Review of ggplot2 
+* Looking at how you can calculate percentaes by hand for dfferent areas, pretty basic 
+* Review of tidyverse 
+* The practice is at least mosty, if not entirely, the code shown in the video before. Also a lot on how the census works which is fine for someone new to it and/or statistics, but i a bit basic for me 
+* Working with MOEs in tidycensus 
+    + Basically they're 90% confidence interval values 
+    + tidycensus has functions like `moe_sum()` and `moe_product()` for calculating combined moe's 
+    + Goes over visualizing moe's 
 * 
 
 
