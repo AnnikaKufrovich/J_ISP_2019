@@ -31,7 +31,8 @@ output: html_document
     + If doing analyses over time, may want to specify year since boundaries of counties, but more often tracts, can change over time 
 * `rbind_tigris()` combines like attributed patial data sets 
 * Review of joining data from a data frame 
-* Review of ggplot2 plotting
+* Review of ggplot2 plotting 
+
 
 ## Practice/Application
 
@@ -40,10 +41,75 @@ library(tidycensus)
 library(tidyverse)
 library(tigris)
 library(ggplot2)
-
+library(ggmap)
+library(purrr)
 
 #census_api_key("864d0c376476571c0dee5dff3422e4a3b75ab093", install = TRUE)
 ```
+
+
+
+```{r}
+new_lib <- read.delim("C:/Users/TeenieTiny/Desktop/2nd Year/Data/Voter_Registration_20181113/20181113_VoterDetail/LIB_20181113.txt", header=FALSE)
+
+
+
+#this didn't work with mutate_geocode, alternatives with commas didn't help
+#new_lib_addres <- new_lib %>% 
+#  mutate(address = paste(V8, V10, V12, sep = " "))
+
+
+#thought this would fix it, it didn't, alternatives with commas didn't help
+#new_lib_addres <- new_lib %>% 
+#  mutate(address = paste(V8, V10, V12, sep = ", "), stringsAsFactors = FALSE)
+
+#tried without zip and with state, still isn't working
+new_lib_addres <- new_lib %>% 
+  mutate(address = paste(V8, V10, "FL", sep = ", "), stringsAsFactors = FALSE)
+```
+
+
+```{r}
+#running this geocoding function
+
+nl_p1 <- new_lib_addres %>% 
+  slice(1:5)
+
+
+#this failed massively first time
+nl_geocode_p1 <- nl_p1 %>%
+  mutate_geocode(address)
+
+```
+
+
+
+link to where I found this function <https://stackoverflow.com/questions/32504880/street-address-to-geolocation-lat-long>
+
+```{r}
+#trying function I found
+geocodeAdddress <- function(address) {
+  require(RJSONIO)
+  url <- "http://maps.google.com/maps/api/geocode/json?address="
+  url <- URLencode(paste(url, address, "&sensor=false", sep = ""))
+  x <- fromJSON(url, simplify = FALSE)
+  if (x$status == "OK") {
+    out <- c(x$results[[1]]$geometry$location$lng,
+             x$results[[1]]$geometry$location$lat)
+  } else {
+    out <- NA
+  }
+  Sys.sleep(0.2)  # API only allows 5 requests per second
+  out
+}
+
+#both of these come out NA even though the first is shown to have an output on stackoverflow
+geocodeAdddress("Time Square, New York City")
+sapply(nl_p1$address, geocodeAdddress)
+
+```
+
+
 
 
 
