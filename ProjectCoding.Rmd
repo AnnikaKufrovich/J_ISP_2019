@@ -48,7 +48,7 @@ new_func_test
 
 ## Geocoding 
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 new_lib <- read.delim("C:/Users/TeenieTiny/Desktop/2nd Year/Data/Voter_Registration_20181113/20181113_VoterDetail/LIB_20181113.txt", header=FALSE)
 
 
@@ -117,11 +117,18 @@ geocoding <- function(df, address_col, seq) {
     slice(seq)
   geocoded <- sliced %>% 
     mutate_geocode(address_col, source = "dsk")
+  geocoded
 }
 
 
 #joining all geocoded datasets
-nl_join <- full_join(nl_geocode_p5, full_join(nl_geocode_p4, full_join(nl_geocode_p3, full_join(nl_geocode_p1, nl_geocode_p2))))
+nl_join <- full_join(nl_geocode_p5, 
+                     full_join(nl_geocode_p4, 
+                               full_join(nl_geocode_p3, 
+                                         full_join(nl_geocode_p1, nl_geocode_p2))))
+nl_join <- nl_join %>%
+  filter(!is.na(lon)) %>%
+  filter(!is.na(lat))
 
 ```
 
@@ -153,10 +160,10 @@ Now that we have the geometry, let's check if things match up
 ```{r}
 liberty$geometry
 
-min(nl_join$lon, na.rm = TRUE)
-max(nl_join$lon, na.rm = TRUE)
-max(nl_join$lat, na.rm = TRUE)
-min(nl_join$lat, na.rm = TRUE)
+min(nl_join$lon)
+max(nl_join$lon)
+max(nl_join$lat)
+min(nl_join$lat)
 ```
 
 the mins and max's don't match, before I try to narrow this down, lets see what happens if I try to put my data and geometry in to a ppp object 
@@ -202,12 +209,13 @@ libppp_act <- ppp(nl_min$x, nl_min$y, window = libwin, marks = nl_min$V29)
 
 
 #Making party variable
-#may change this to case_when later
+#may change this to case_when rather than ifelse later
 summary(nl_min$V24)
 
 nl_min <- nl_min %>%
   mutate(party = ifelse(V24 == "DEM", "Democrat", 
                         ifelse(V24 == "REP", "Republican", "NPA/Other")))
+nl_min$party <- as.factor(nl_min$party)
 
 #ppp marked by party
 libppp_party <- ppp(nl_min$x, nl_min$y, window = libwin, marks = nl_min$party)
@@ -216,4 +224,86 @@ libppp_party <- ppp(nl_min$x, nl_min$y, window = libwin, marks = nl_min$party)
 
 
 ## Tests and Plots
+
+Really quick, lets look at a basic plot of registered voters in Liberty county
+
+```{r}
+plot(libppp, main = "Registered Voters in Liberty County, FL")
+```
+
+
+Looking at spatial dispersion of all registered voters in liberty county regardless of active status or party affiliation. I expect that the quadrat test will show that there is clustering.
+
+```{r}
+quad_lib <- quadrat.test(libppp, alternative = "clustered")
+quad_lib
+```
+
+The p-value for the clustered quadrat test is less than .01. We are therefor 99.99% confident that registered voters have a clustered distribution in liberty county, FL. However we cannot conclude whether this is special in comparison to people who are not registered voters. 
+
+
+Some alternatives to the quadrat test are the nearest neighbor test and the G function to check for spatial randomness.
+
+```{r}
+nnd_lib <- nndist(libppp)
+hist(nnd_lib, xlab = "Scaled distance to nearest neighbor, no units", 
+     main = "Nearest registered Neighbour in Liberty County, FL")
+
+#this isn't super helpful, lets try adding breaks
+brks <- seq(0, 0.07, by = 0.001)
+
+hist(nnd_lib, breaks = brks, xlab = "Scaled distance to nearest neighbor, no units", 
+     main = "Nearest registered Neighbour in Liberty County, FL")
+
+#Doesn't make our distribution easier to see, jutst proves this is a right skewed 
+#distribution since only a couple people are not in close proximity to others
+
+
+#not sure why this isn't working properly 
+gest_lib <- Gest(libppp)
+plot(gest_lib)
+``` 
+
+We can see from the distribution of our nearest neighbour distance test that most regitered voters are in some kind of close proximity to other registered voters in liberty county. We are still unable to conclude whether this is specific to registered voters as this could simply be because all people in liberty county cluster similarly whether or not they are registered. 
+
+Let's look at some density plots
+
+```{r, message=FALSE, warning=FALSE}
+#general density
+gen_dens <- plot(density(libppp), main = "Density of registered voters in Liberty County, FL")
+gen_dens
+
+#basic and density plots of active and inactive voters
+active_splits <- split(libppp_act) 
+bas_act <- plot(active_splits, main = "Active and Inactive Voters")
+bas_act
+
+dens_act <- density(active_splits)
+plot(dens_act)
+
+
+#looking for where inactive voters are more prominent
+frac_dens_act <- dens_act[[2]] / (dens_act[[1]] + dens_act[[2]])
+
+plot(frac_dens_act, main = "Density for proportion if Inactive voters versus total voters in an area")
+
+
+#looking at party distribution/density
+party_splits <- split(libppp_party) 
+bas_party <- plot(party_splits, main = "Party Identification")
+bas_party
+
+dens_party <- density(party_splits)
+plot(dens_party)
+
+frac_dens_dem <- dens_party[[1]] / (dens_party[[1]] + dens_party[[2]] + dens_party[[3]])
+frac_dens_no <- dens_party[[2]] / (dens_party[[1]] + dens_party[[2]] + dens_party[[3]])
+frac_dens_rep <- dens_party[[3]] / (dens_party[[1]] + dens_party[[2]] + dens_party[[3]])
+
+
+plot(frac_dens_dem)
+plot(frac_dens_no)
+plot(frac_dens_rep)
+
+```
 
