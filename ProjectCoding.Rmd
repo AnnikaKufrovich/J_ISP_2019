@@ -8,12 +8,12 @@ output: html_document
 
 ```{r, include=FALSE}
 library(tidycensus)
-library(tidyverse)
 library(tigris)
 library(ggplot2)
 library(ggmap)
-library(purrr)
 library(dplyr)
+library(sf)
+library(spatstat)
 ```
 
 
@@ -70,6 +70,7 @@ new_lib_addres <- new_lib %>%
 
 
 ```{r, warning=FALSE, message=FALSE}
+#geocoding first 1000 obs
 nl_p1 <- new_lib_addres %>% 
   slice(1:1000)
 
@@ -77,7 +78,7 @@ nl_geocode_p1 <- nl_p1 %>%
   mutate_geocode(address, source = "dsk")
 
 
-
+#2nd 1000 obs
 nl_p2 <- new_lib_addres %>%
   slice(1001:2000)
 
@@ -85,8 +86,7 @@ nl_geocode_p2 <- nl_p2 %>%
   mutate_geocode(address, source = "dsk")
 
 
-
-
+#3rd 1000 obs
 nl_p3 <- new_lib_addres %>%
   slice(2001:3000)
 
@@ -94,7 +94,7 @@ nl_geocode_p3 <- nl_p3 %>%
   mutate_geocode(address, source = "dsk")
 
 
-
+#4th 1000 obs
 nl_p4 <- new_lib_addres %>%
   slice(3001:4000)
 
@@ -102,7 +102,7 @@ nl_geocode_p4 <- nl_p4 %>%
   mutate_geocode(address, source = "dsk")
 
 
-
+#
 nl_p5 <- new_lib_addres %>%
   slice(4001:4626)
 
@@ -120,7 +120,7 @@ geocoding <- function(df, address_col, seq) {
 }
 
 
-
+#joining all geocoded datasets
 nl_join <- full_join(nl_geocode_p5, full_join(nl_geocode_p4, full_join(nl_geocode_p3, full_join(nl_geocode_p1, nl_geocode_p2))))
 
 ```
@@ -128,7 +128,92 @@ nl_join <- full_join(nl_geocode_p5, full_join(nl_geocode_p4, full_join(nl_geocod
 
 ## Getting shape of liberty county
 
+```{r, warning=FALSE, message=FALSE}
+#retrieving sp object in case sf object doesn't behave
+options(tigris_class = "sp")
+fl_counties <- counties(state = "FL")
+plot(fl_counties)
+
+
+#retrieving sf object because it will probably be easier to isolate liberty county this way
+options(tigris_class = "sf")
+fl_counties2 <- counties(state = "FL")
+plot(fl_counties2$geometry)
+
+
+#isolating liberty county
+liberty <- fl_counties2 %>% 
+  filter(NAME == "Liberty")
+plot(liberty$geometry)
+```
+ 
+ 
+Now that we have the geometry, let's check if things match up
+
+```{r}
+liberty$geometry
+
+min(nl_join$lon, na.rm = TRUE)
+max(nl_join$lon, na.rm = TRUE)
+max(nl_join$lat, na.rm = TRUE)
+min(nl_join$lat, na.rm = TRUE)
+```
+
+the mins and max's don't match, before I try to narrow this down, lets see what happens if I try to put my data and geometry in to a ppp object 
+
+
+```{r, warning=FALSE, message=FALSE}
+#making my window 
+libwin <- owin(xy = liberty$geometry)
+plot(libwin)
+summary(libwin)
+#this didn't come out the way I expected it to, just made a square ranging from 0 to 1 on each axis
+#may come back to this
 
 
 
+
+#transforming lat/lon coordinates to x/y coordinates and reducing to 0-1 scale
+nl_jxy <- nl_join %>% 
+  mutate(y = lon, x = lat)
+
+nl_min <- nl_jxy %>% 
+  select(x, y, V29, V24)
+
+minx <- min(nl_min$x, na.rm = TRUE)
+maxx <- max(nl_min$x, na.rm = TRUE)
+
+nl_min$x <- (nl_min$x - minx)/(maxx - minx)
+
+miny <- min(nl_min$y, na.rm = TRUE)
+maxy <- max(nl_min$y, na.rm = TRUE)
+
+nl_min$y <- (nl_min$y - miny)/(maxy - miny)
+
+
+
+#Making unmarked ppp object
+
+libppp <- ppp(nl_min$x, nl_min$y, window = libwin)
+
+#ppp object marked by voter status (Active vs Inactive)
+libppp_act <- ppp(nl_min$x, nl_min$y, window = libwin, marks = nl_min$V29)
+
+
+
+#Making party variable
+#may change this to case_when later
+summary(nl_min$V24)
+
+nl_min <- nl_min %>%
+  mutate(party = ifelse(V24 == "DEM", "Democrat", 
+                        ifelse(V24 == "REP", "Republican", "NPA/Other")))
+
+#ppp marked by party
+libppp_party <- ppp(nl_min$x, nl_min$y, window = libwin, marks = nl_min$party)
+```
+
+
+
+## Tests and Plots
 
