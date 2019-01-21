@@ -26,7 +26,7 @@ output: html_document
     + You can retrieve shape files, as sp objects, using tigris functions 
 * Customizing tigris functions 
     + Cartographic boundary shape files represent the US coastline more acurately, you can et these by etting the `cb` arument equal to true 
-    + By calling `options(tigris_class = "sf"), you can get f rather than sp objects 
+    + By calling `options(tigris_class = "sf")`, you can get f rather than sp objects 
     + Can load objects faster with `options(tigris_use_cache = TRUE)` 
     + If doing analyses over time, may want to specify year since boundaries of counties, but more often tracts, can change over time 
 * `rbind_tigris()` combines like attributed patial data sets 
