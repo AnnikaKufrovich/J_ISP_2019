@@ -8,30 +8,27 @@ output: html_document
 ## Courses I took
 
 * Intermediate R 
-  + Lots of good basics, but I think everybody took this 
 * Writing Functions in R 
-  + Going over more in depth how functions work and when to use functions 
 * Writing Efficient R Code 
-  + Builds upon the previous 2 courses 
-  + Looking at how to make sure the way you're coding is the fastest in can be 
-  + When you've got a few hundred or a few thousand observations, this isn't a big deal 
-  + When you have millions, you probably don't want to run code for 2 weeks 
+    + Looking at how to make sure the way you're coding is the fastest in can be 
+    + When you've got a few hundred or a few thousand observations, this isn't a big deal 
+    + When you have millions, you probably don't want to run code for 2 weeks 
 * Parallel Programming 
-  + An extension to the *fast* or *efficient* side of R coding 
-  + Basically dividing up tasks between computer cores to reduce coding run time 
-  + Can't be used on everything, but still super useful for functions that run without dependence on previous outcomes
+    + An extension to the *fast* or *efficient* side of R coding 
+    + Basically dividing up tasks between computer cores to reduce coding run time 
+    + Can't be used on everything
 * Working with geospatial data in R 
-  + Really cool stuff, but sp objects are very confusing 
+    + Really cool stuff, but sp objects are very confusing 
 * Spatial Analysis in R with sf and raster
-  + raster objects are gridded over large windows (elevation over an area could be in this)
-  + sf objects are also like sp but much more intuitive, data frame with a list column to define shapes 
-  + Data associated with sf and sp objects are meant for statistics of defined areas like counties, states, or nations (areal statistics) 
+    + raster objects are gridded over large windows (elevation over an area could be in this)
+    + sf objects are also like sp but much more intuitive, data frame with a list column to define shapes 
+    + Data associated with sf and sp objects are meant for statistics of defined areas like counties, states, or nations (areal statistics) 
 * Spatial Statitics 
-  + focuses on points or "events" within a "window" (a polygon from an sf or sp object)
-  + Tests for distribution of events and density plots
-  + Not limited to this, also goes through more things with areal statistics, space-time data, and GLMs
+    + Focuses on points or "events" within a "window" (a polygon from an sf or sp object)
+    + Tests for distribution of events and density plots
+    + Not limited to this, also goes through more things with areal statistics, space-time data, and GLMs
 * Analyzing US Census Data 
-  + goes through how census data is structured and how to retrieve various kinds of census data 
+    + Goes through how census data is structured and how to retrieve various kinds of census data 
 * The last 4 courses **all** went through making pretty plots with ggplot2 
 
 
