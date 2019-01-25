@@ -1,0 +1,296 @@
+---
+title: "Final Presentation"
+author: "Annika Kufrovich"
+date: "January 24, 2019"
+output: html_document
+---
+
+## Courses I took
+
+* Intermediate R 
+  + Lots of good basics, but I think everybody took this 
+* Writing Functions in R 
+  + Going over more in depth how functions work and when to use functions 
+* Writing Efficient R Code 
+  + Builds upon the previous 2 courses 
+  + Looking at how to make sure the way you're coding is the fastest in can be 
+  + When you've got a few hundred or a few thousand observations, this isn't a big deal 
+  + When you have millions, you probably don't want to run code for 2 weeks 
+* Parallel Programming 
+  + An extension to the *fast* or *efficient* side of R coding 
+  + Basically dividing up tasks between computer cores to reduce coding run time 
+  + Can't be used on everything, but still super useful for functions that run without dependence on previous outcomes
+* Working with geospatial data in R 
+  + Really cool stuff, but sp objects are very confusing 
+* Spatial Analysis in R with sf and raster
+  + raster objects are gridded over large windows (elevation over an area could be in this)
+  + sf objects are also like sp but much more intuitive, data frame with a list column to define shapes 
+  + Data associated with sf and sp objects are meant for statistics of defined areas like counties, states, or nations (areal statistics) 
+* Spatial Statitics 
+  + focuses on points or "events" within a "window" (a polygon from an sf or sp object)
+  + Tests for distribution of events and density plots
+  + Not limited to this, also goes through more things with areal statistics, space-time data, and GLMs
+* Analyzing US Census Data 
+  + goes through how census data is structured and how to retrieve various kinds of census data 
+* The last 4 courses **all** went through making pretty plots with ggplot2 
+
+
+
+## Disclaimer and My data
+
+Disclaimer:
+I have been working with my data for a while, already had a pretty pecific idea of what I wanted to do with thi data during ISP, and have been coding in R for semesters
+
+Data:
+I have a big file of all registered voters in the state of Florida (This is public record because of Florida sunshine law). Each row is a registered voter and the variables are each a portion of the voter registration form. Variables I focus on are voter ID numbers, address, party affiliation, and active voter status. There are are roughly 30 more variable columns but we won't worry about those.
+
+
+
+## Quick look at my matching function 
+
+```{r, warning = FALSE, message = FALSE}
+library(dplyr)
+```
+
+Test Dataframes
+
+```{r, warning=FALSE, message=FALSE}
+test1b <- data.frame(numbers = 1:8, letters = c("a", "b", "c", "d", "a", "b", "c", "d"))
+test4b <- data.frame(numbers = 1:8, letters = c("a", "b", "c", "d", "a", "b", "c", "e"), 
+                     lon = c(12, 31, 64, 38, 89, 73, 91, 21))
+```
+
+Function
+
+```{r, warning=FALSE, message=FALSE}
+matching_dfs_addcol <- function(newdf, olddf) {
+  matching <- semi_join(olddf, newdf)
+  matching_col <- matching %>%
+    mutate(matched = TRUE)
+  not_matching <- anti_join(newdf, olddf)
+  not_matching_col <- not_matching %>%
+    mutate(matched = FALSE)
+  combined_df <- full_join(matching_col, not_matching_col)
+  combined_df
+}
+
+new_func_test <- matching_dfs_addcol(test1b, test4b)
+new_func_test
+```
+
+
+## The Pains of Geocoding
+
+
+```{r, warning = FALSE, message = FALSE}
+library(ggmap)
+```
+
+```{r, warning = FALSE, message = FALSE}
+#loading in liberty county data
+new_lib <- read.delim("C:/Users/TeenieTiny/Desktop/2nd Year/Data/Voter_Registration_20181113/20181113_VoterDetail/LIB_20181113.txt", header=FALSE)
+
+#making an address column to use for geocoding
+new_lib_address <- new_lib %>% 
+  mutate(address = paste(V8, V10, "FL", sep = ", "))
+
+
+#1st 1000 obs
+nl_p1 <- new_lib_address %>% 
+  slice(1:1000)
+nl_geocode_p1 <- nl_p1 %>%
+  mutate_geocode(address, source = "dsk")
+
+
+#2nd 1000 obs
+nl_p2 <- new_lib_address %>%
+  slice(1001:2000)
+nl_geocode_p2 <- nl_p2 %>%
+  mutate_geocode(address, source = "dsk")
+
+
+#3rd 1000 obs
+nl_p3 <- new_lib_address %>%
+  slice(2001:3000)
+nl_geocode_p3 <- nl_p3 %>%
+  mutate_geocode(address, source = "dsk")
+
+
+#4th 1000 obs
+nl_p4 <- new_lib_address %>%
+  slice(3001:4000)
+nl_geocode_p4 <- nl_p4 %>%
+  mutate_geocode(address, source = "dsk")
+
+
+#last few hundred obs
+nl_p5 <- new_lib_address %>%
+  slice(4001:4626)
+nl_geocode_p5 <- nl_p5 %>%
+  mutate_geocode(address, source = "dsk")
+
+#joining
+nl_join <- full_join(nl_geocode_p5, 
+                     full_join(nl_geocode_p4, 
+                               full_join(nl_geocode_p3, 
+                                         full_join(nl_geocode_p1, nl_geocode_p2))))
+
+
+
+#Then I realized I should have been using a function
+geocoding <- function(df, col, seq) {
+  sliced <- df %>% 
+    slice(seq)
+  geocoded <- sliced %>% 
+    mutate_geocode(col, source = "dsk")
+  geocoded
+}
+
+#ex <- geocoding(df = new_lib_address, col = address, seq = 1:3)
+#ex$lon
+#ex$lat
+
+```
+
+
+## Getting the shape of Liberty County
+
+```{r, warning = FALSE, message = FALSE}
+library(sp)
+library(sf)
+library(tigris)
+library(spatstat)
+library(maptools)
+```
+
+
+```{r, warning = FALSE, message = FALSE}
+
+#retrieving sf object because it's easier to isolate liberty county this way
+options(tigris_class = "sf")
+fl_counties2 <- invisible(counties(state = "FL"))
+
+
+#isolating liberty county
+liberty <- fl_counties2 %>% 
+  filter(NAME == "Liberty")
+plot(liberty$geometry)
+
+
+#retrieving sp object in case sf object doesn't behave
+libdf <- as.data.frame(liberty$geometry[[1]][[1]][[1]])
+colnames(libdf) <- c("x", "y")
+
+libPoly <- Polygon(libdf, hole = FALSE)
+libPolys <- Polygons(list(libPoly), ID = "liberty")
+libSpPoly <- SpatialPolygons(list(libPolys))
+
+liberty_window <- as.owin(W = libSpPoly)
+plot(liberty_window)
+
+nl_jxy <- nl_join %>% 
+  mutate(x = lon, y = lat) %>% 
+  mutate(party = ifelse(V24 == "DEM", "Democrat", 
+                        ifelse(V24 == "REP", "Republican", "NPA/Other"))) %>%
+  mutate(active = V29)
+
+nl_jxy$party <- as.factor(nl_jxy$party)
+
+nl_min <- nl_jxy %>% 
+  select(x, y, party, active)
+
+libppp <- ppp(nl_min$x, nl_min$y, window = liberty_window)
+plot(libppp)
+
+libppp_act <- ppp(nl_min$x, nl_min$y, window = liberty_window, marks = nl_min$active)
+summary(libppp_act)
+
+libppp_party <- ppp(nl_min$x, nl_min$y, window = liberty_window, marks = nl_min$party)
+summary(libppp_party)
+```
+
+
+
+##Some pretty plots
+
+```{r, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(rnaturalearth)
+library(rnaturalearthdata)
+```
+
+```{r, warning = FALSE, message = FALSE}
+#nl_sites <- st_as_sf(nl_join, coords = c("lon", "lat"), 
+#    crs = 4326, agr = "constant")
+world <- ne_countries(scale = "medium", returnclass = "sf")
+class(world)
+
+ggplot(data = world) + 
+  geom_sf() + 
+  geom_sf(data = fl_counties2, fill = NA, color = gray(0.5)) + 
+  geom_point(data = nl_jxy, aes(x = lon, y = lat), color = "purple", alpha = 0.4) + 
+  coord_sf(xlim = c(-85.5, -84), ylim = c(29.5, 31)) + 
+  theme_light() + 
+  labs(x = "Longitude", y = "Latitude", title = "Registered Voters", 
+       subtitle = "Liberty County, FL")
+
+
+ggplot(data = world) + 
+  geom_sf() + 
+  geom_sf(data = fl_counties2, fill = NA, color = gray(0.5)) + 
+  geom_point(data = nl_jxy, aes(x = lon, y = lat, col = active), shape = "o", alpha = 0.4) + 
+  coord_sf(xlim = c(-85.5, -84), ylim = c(29.5, 31)) + 
+  scale_color_manual(values = c("coral", "black")) + 
+  theme_light() + 
+  labs(x = "Longitude", y = "Latitude", title = "Active vs Inactive Voters", 
+       subtitle = "Liberty County, FL", colour = "Status")
+
+
+ggplot(data = world) + 
+  geom_sf() + 
+  geom_sf(data = fl_counties2, fill = NA, color = gray(0.5)) + 
+  geom_point(data = nl_jxy, aes(x = lon, y = lat, col = party), shape = "o", alpha = 0.4) + 
+  coord_sf(xlim = c(-85.5, -84), ylim = c(29.5, 31)) + 
+  scale_color_manual(values = c("blue", "green", "red")) + 
+  theme_light() + 
+  labs(x = "Longitude", y = "Latitude", title = "Party Affiliation of Voters", 
+       subtitle = "Liberty County, FL", colour = "Party")
+
+ggplot(data = world) + 
+  geom_sf() + 
+  geom_sf(data = fl_counties2, fill = NA, color = gray(0.5)) + 
+  geom_point(data = nl_jxy, aes(x = lon, y = lat, col = party), shape = "o", alpha = 0.4) + 
+  coord_sf(xlim = c(-85.5, -84), ylim = c(29.5, 31)) + 
+  scale_color_manual(values = c("light blue", "green", "red")) + 
+  theme_light() + 
+  labs(x = "Longitude", y = "Latitude", title = "Party Affiliation of Voters", 
+       subtitle = "Liberty County, FL", colour = "Party")
+
+
+```
+
+
+## Density plots
+
+```{r, warning = FALSE, message = FALSE}
+plot(libppp)
+gen_dens <- plot(density(libppp), main = "Density of registered voters in Liberty County, FL")
+invisible(gen_dens)
+
+active_splits <- split(libppp_act) 
+bas_act <- plot(active_splits, main = "Active and Inactive Voters")
+invisible(bas_act)
+
+dens_act <- density(active_splits)
+plot(dens_act, main =  "Active and Inactive Voters")
+
+frac_dens_act <- dens_act[[2]] / (dens_act[[1]] + dens_act[[2]])
+plot(frac_dens_act, main = "Density for proportion of Inactive voters")
+
+```
+
+## Future Research
+* Figure out why so many points were outside liberty county and somw were not gecoded 
+* Expand to other counties in Florida, Florida as a whole
+* Use data for various GLM's
+* Work on more accurate and more efficient geocoding

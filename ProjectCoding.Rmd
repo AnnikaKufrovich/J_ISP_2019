@@ -14,6 +14,8 @@ library(ggmap)
 library(dplyr)
 library(sf)
 library(spatstat)
+library(rnaturalearth)
+library(rnaturalearthdata)
 ```
 
 
@@ -102,7 +104,7 @@ nl_geocode_p4 <- nl_p4 %>%
   mutate_geocode(address, source = "dsk")
 
 
-#
+#last few hundred obs
 nl_p5 <- new_lib_addres %>%
   slice(4001:4626)
 
@@ -244,6 +246,8 @@ The p-value for the clustered quadrat test is less than .01. We are therefor 99.
 
 Some alternatives to the quadrat test are the nearest neighbor test and the G function to check for spatial randomness.
 
+
+#discard for pres
 ```{r}
 nnd_lib <- nndist(libppp)
 hist(nnd_lib, xlab = "Scaled distance to nearest neighbor, no units", 
@@ -307,3 +311,43 @@ plot(frac_dens_rep)
 
 ```
 
+
+
+
+
+
+```{r}
+ggplot(data = liberty) + geom_sf() + geom_point(data = nl_join, aes(x = lon, y = lat)) + theme_light()
+
+nlj_filter <- nl_join %>% 
+  filter(lat > 30) %>%
+  filter(lon < -84.6) %>% 
+  filter(lat < 30.6) %>% 
+  mutate(party = ifelse(V24 == "DEM", "Democrat", 
+                        ifelse(V24 == "REP", "Republican", "NPA/Other")))
+
+ggplot(data = liberty) + geom_sf() + 
+  geom_point(data = nlj_filter, aes(x = lon, y = lat, col = party), shape = "o") + 
+  theme_light() + scale_color_manual(values = c("blue", "green", "red"))
+
+
+ggplot(data = liberty) + geom_sf() + 
+  geom_point(data = nlj_filter, aes(x = lon, y = lat, col = V29), shape = "o") + 
+  theme_light() + scale_color_manual(values = c("coral", "black"))
+
+
+
+nl_sites <- st_as_sf(nl_join, coords = c("lon", "lat"), 
+    crs = 4326, agr = "constant")
+world <- ne_countries(scale = "medium", returnclass = "sf")
+class(world)
+
+
+ggplot(data = world) + 
+  geom_sf() + 
+  geom_sf(data = fl_counties2, fill = NA, color = gray(0.5)) + 
+  geom_sf(data = nl_sites, color = "red", alpha = 0.4) + 
+  coord_sf(xlim = c(-85.5, -84), ylim = c(29.5, 31))
+
+
+```
